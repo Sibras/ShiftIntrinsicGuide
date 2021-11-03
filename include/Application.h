@@ -15,8 +15,11 @@
  * limitations under the License.
  */
 
-#include "DataModel.h"
-#include "Downloader.h"
+#include "CategoryModel.h"
+#include "DataProvider.h"
+#include "IntrinsicModel.h"
+#include "TechnologyModel.h"
+#include "TypeModel.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -24,7 +27,7 @@
 
 class Application final : public QObject
 {
-    Q_OBJECT
+    Q_OBJECT;
     Q_PROPERTY(bool hasOKDialog READ getHasOKDialog NOTIFY hasOKDialogChanged);
     Q_PROPERTY(QString OKDialogTitle READ getOKDialogTitle NOTIFY notifyOKDialogTitleChanged);
     Q_PROPERTY(float progress READ getProgress WRITE setProgress NOTIFY notifyProgressChanged);
@@ -126,12 +129,17 @@ public:
     Q_SIGNAL void notifyLoadingTitleChanged() const;
 
 private:
-    /** Sets up the internal data models */
-    void setupData();
+    /**
+     * Sets up the internal data models
+     */
+    Q_SLOT void setupData();
 
     QGuiApplication app;
     QQmlApplicationEngine engine;
-    DataModel data;
+    TechnologyModel technologiesModel;
+    TypeModel typesModel;
+    CategoryModel categoriesModel;
+    IntrinsicModel intrinsicsModel;
 
     struct OKDialogData final
     {
@@ -141,8 +149,10 @@ private:
 
     QQueue<OKDialogData> queueOK;
     QMutex mutexOK;
-    std::atomic<float> progress = 1.0F;
+    std::atomic<float> progress = 0.0f;
     std::atomic_bool loaded = false;
     QString loading = "Loading...";
-    QFuture<void> dataLoad;
+    DataProvider provider;
+    QFuture<bool> dataLoad;
+    QFutureWatcher<bool> watcher;
 };

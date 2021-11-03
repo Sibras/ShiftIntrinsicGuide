@@ -35,6 +35,11 @@ void DataProvider::addProgress(const float value) noexcept
     parentApp->setProgress(progress);
 }
 
+InternalData& DataProvider::getData() noexcept
+{
+    return data;
+}
+
 bool DataProvider::setup() noexcept
 {
     bool fail = false;
@@ -53,6 +58,15 @@ bool DataProvider::setup() noexcept
         parentApp->setProgress(1.0f);
     }
     return true;
+}
+
+void DataProvider::clear()
+{
+    data.instructions.clear();
+    data.allTechnologies.clear();
+    data.allTypes.clear();
+    data.allCategories.clear();
+    data.version.clear();
 }
 
 bool DataProvider::load() noexcept
@@ -142,6 +156,8 @@ bool DataProvider::create() noexcept
                         if (auto t = childE.firstChild().toText(); !t.isNull()) {
                             types.emplaceBack(t.data());
                         }
+                        // TODO: Intel dont list types anymore so instead detect possible types from intrinsic
+                        // parameters and return value
                     } else if (childE.tagName() == "CPUID") {
                         // Can have multiple cpuid nodes (e.g. different AVX512 sets)
                         if (auto t = childE.firstChild().toText(); !t.isNull()) {
@@ -267,6 +283,7 @@ bool DataProvider::create() noexcept
                                                         }
 
                                                         // Add to list
+                                                        // TODO: Use move and forwarding constructor
                                                         measurements.append(
                                                             {arch, latency, latencyMemory, throughput, uops, ports});
                                                         found = true;
@@ -295,18 +312,22 @@ bool DataProvider::create() noexcept
             }
 
             // Add information to list
+            // TODO: Use move and forwarding constructor
             data.instructions.append(
                 {name, description, operation, header, tech, types, categories, instruction, measurements});
 
             // Add to list of known techs/types
+            if (!data.allTechnologies.contains(tech)) {
+                data.allTechnologies.append(std::move(tech));
+            }
             for (auto& j : types) {
                 if (!data.allTypes.contains(j)) {
-                    data.allTypes.append(j);
+                    data.allTypes.append(std::move(j));
                 }
             }
             for (auto& j : categories) {
                 if (!data.allCategories.contains(j)) {
-                    data.allCategories.append(j);
+                    data.allCategories.append(std::move(j));
                 }
             }
         }
@@ -317,6 +338,35 @@ bool DataProvider::create() noexcept
     // Sort the 'all' lists
     data.allTypes.sort();
     data.allCategories.sort();
+    data.allTechnologies.sort();
+
+    // Try and sort technology by age
+    QList<QString> sortTechnologies;
+    for (auto& j : data.allTechnologies) {
+        if (j == "MMX") {
+            sortTechnologies.emplaceFront(std::move(j));
+        } else if (j.startsWith("SSE")) {
+            auto find = sortTechnologies.indexOf("AVX");
+            sortTechnologies.emplace(find, std::move(j));
+        } else if (j == "SSSE3") {
+            auto find = sortTechnologies.indexOf("SSE3");
+            sortTechnologies.emplace(find + 1, std::move(j));
+        } else if (j == "AVX") {
+            sortTechnologies.emplaceFront(std::move(j));
+        } else if (j == "AVX2") {
+            auto find = sortTechnologies.indexOf("AVX");
+            sortTechnologies.emplace(find + 1, std::move(j));
+        } else if (j == "AVX_VNNI") {
+            auto find = sortTechnologies.indexOf("AVX2");
+            sortTechnologies.emplace(find + 1, std::move(j));
+        } else if (j.startsWith("AVX-512")) {
+            auto find = sortTechnologies.indexOf("AMX");
+            sortTechnologies.emplace(find, std::move(j));
+        } else if (!j.isEmpty()) {
+            sortTechnologies.emplaceBack(std::move(j));
+        }
+    }
+    data.allTechnologies.swap(sortTechnologies);
 
     // TODO:****************
     // Delete any cache files from disk

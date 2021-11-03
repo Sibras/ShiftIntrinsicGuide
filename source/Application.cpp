@@ -25,7 +25,11 @@ int argc = 0;
 Application::Application(QObject* parent) noexcept
     : QObject(parent)
     , app(argc, nullptr)
-    , data(this)
+    , technologiesModel(this)
+    , typesModel(this)
+    , categoriesModel(this)
+    , intrinsicsModel(this)
+    , provider(this)
 {}
 
 Application::~Application() noexcept
@@ -38,7 +42,10 @@ int Application::run() noexcept
 {
     // Register the GUI data model
     engine.rootContext()->setContextProperty("application", this);
-    engine.rootContext()->setContextProperty("dataModel", &data);
+    engine.rootContext()->setContextProperty("intrinsicsModel", &intrinsicsModel);
+    engine.rootContext()->setContextProperty("technologiesModel", &technologiesModel);
+    engine.rootContext()->setContextProperty("typesModel", &typesModel);
+    engine.rootContext()->setContextProperty("categoriesModel", &categoriesModel);
 
     // Load the UI with the default QML file
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
@@ -48,7 +55,11 @@ int Application::run() noexcept
     }
 
     // Queue up the model initialisation
-    QTimer::singleShot(1000, [&] { dataLoad = QtConcurrent::run([this] { setupData(); }); });
+    connect(&watcher, &QFutureWatcher<bool>::finished, this, &Application::setupData);
+    QTimer::singleShot(1000, [this] {
+        dataLoad = QtConcurrent::run([this] { return provider.setup(); });
+        watcher.setFuture(dataLoad);
+    });
 
     return app.exec();
 }
@@ -104,7 +115,7 @@ float Application::getProgress() const noexcept
 
 void Application::setProgress(const float newProgress) noexcept
 {
-    progress = fmin(fabs(newProgress), 1.0F);
+    progress = fmin(fabs(newProgress), 1.0f);
     emit notifyProgressChanged();
 }
 
@@ -133,8 +144,15 @@ void Application::setLoadingTitle(const QString& title)
 
 void Application::setupData()
 {
-    if (DataProvider provider(this); provider.setup()) {
-        // TODO: setup data models
+    if (dataLoad.result()) {
+        // Setup data models
+        technologiesModel.load(provider.getData().allTechnologies);
+        typesModel.load(provider.getData().allTypes);
+        categoriesModel.load(provider.getData().allCategories);
+        intrinsicsModel.load(provider.getData().instructions);
+
+        // Clear data provider
+        provider.clear();
 
         // Update UI
         setProgress(1.0f);

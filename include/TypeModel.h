@@ -15,31 +15,39 @@
  * limitations under the License.
  */
 
+#include "InternalData.h"
+
 #include <QAbstractListModel>
 
-class QNetworkReply;
-
-class DataModel final : public QAbstractListModel
+class TypeModel final : public QAbstractListModel
 {
     Q_OBJECT;
 
 public:
-    DataModel(const DataModel& other) = delete;
+    TypeModel(const TypeModel& other) = delete;
 
-    DataModel(DataModel&& other) noexcept = delete;
+    TypeModel(TypeModel&& other) noexcept = delete;
 
-    DataModel& operator=(const DataModel& other) = delete;
+    TypeModel& operator=(const TypeModel& other) = delete;
 
-    DataModel& operator=(DataModel&& other) noexcept = delete;
+    TypeModel& operator=(TypeModel&& other) noexcept = delete;
+
+    enum TypeRole
+    {
+        TypeRoleName = Qt::DisplayRole,
+        TypeRoleChecked = Qt::UserRole
+    };
+
+    Q_ENUM(TypeRole);
 
     /**
      * Constructor.
      * @param [in] parent (Optional) If non-null, the parent.
      */
-    explicit DataModel(QObject* parent = nullptr) noexcept;
+    explicit TypeModel(QObject* parent = nullptr) noexcept;
 
     /** Destructor. */
-    ~DataModel() override = default;
+    ~TypeModel() override = default;
 
     /**
      * Get the number of rows in the model.
@@ -73,5 +81,12 @@ public:
      */
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
 
+    /**
+     * Loads this model.
+     * @param [in,out] types The data to load.
+     */
+    void load(QList<QString>& types) noexcept;
+
 private:
+    QList<StringChecked> allTypes; /**< The list of all known intrinsic types */
 };

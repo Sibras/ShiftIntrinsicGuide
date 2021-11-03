@@ -51,6 +51,46 @@ Item {
         }
     }
 
+    Frame {
+        id: intrinsicFrame
+        visible: application.progress === 1
+        width: parent.width * 0.7 - anchors.rightMargin * 1.5
+        bottomPadding: 0
+        rightPadding: 0
+        leftPadding: 0
+        topPadding: 0
+        anchors.top: parent.top
+        anchors.topMargin: 50
+        anchors.right: parent.right
+        anchors.rightMargin: 50
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        IntrinsicView {
+            id: intrinsicView
+            anchors.fill: parent
+        }
+    }
+
+    Frame {
+        id: menuFrame
+        visible: application.progress === 1
+        width: parent.width * 0.3 - anchors.leftMargin * 1.5
+        leftPadding: 0
+        rightPadding: 0
+        bottomPadding: 0
+        topPadding: 0
+        anchors.top: parent.top
+        anchors.topMargin: 50
+        anchors.left: parent.left
+        anchors.leftMargin: 50
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        MenuView {
+            id: menuView
+            anchors.fill: parent
+        }
+    }
+
     BusyIndicator {
         id: busyIndicator
         width: 60

@@ -14,31 +14,34 @@
  * limitations under the License.
  */
 
-#include "DataModel.h"
+#include "IntrinsicModel.h"
 
 #include "Application.h"
 
-DataModel::DataModel(QObject* parent) noexcept
+IntrinsicModel::IntrinsicModel(QObject* parent) noexcept
     : QAbstractListModel(parent)
 {}
 
-int DataModel::rowCount(const QModelIndex& parameter1) const noexcept
+int IntrinsicModel::rowCount(const QModelIndex& parameter1) const noexcept
 {
     return 0;
 }
 
-QVariant DataModel::data(const QModelIndex& index, int role) const noexcept
+QVariant IntrinsicModel::data(const QModelIndex& index, int role) const noexcept
 {
     return QVariant();
 }
 
-QHash<int, QByteArray> DataModel::roleNames() const noexcept
+QHash<int, QByteArray> IntrinsicModel::roleNames() const noexcept
 {
     static const QHash<int, QByteArray> roles{};
     return roles;
 }
 
-Qt::ItemFlags DataModel::flags(const QModelIndex& /*index*/) const noexcept
+Qt::ItemFlags IntrinsicModel::flags(const QModelIndex& /*index*/) const noexcept
 {
     return Qt::NoItemFlags;
 }
+
+void IntrinsicModel::load(QList<Instruction>& data) noexcept
+{}
