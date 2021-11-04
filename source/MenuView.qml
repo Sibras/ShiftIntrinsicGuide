@@ -1,6 +1,7 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.11
+import ShiftIntrinsicGuide 1.0
 
 Row {
     id: menuView
@@ -37,6 +38,7 @@ Row {
                         CheckBox {
                             checkable: true
                             checked: technologyChecked
+                            onToggled: technologiesModel.setData(technologiesModel.index(index, 0), checked, TechnologyModel.TechnologyRoleChecked)
                             scale: 0.7
                             topPadding: 0
                             bottomPadding: 0
@@ -85,6 +87,7 @@ Row {
                         CheckBox {
                             checkable: true
                             checked: typeChecked
+                            onToggled: typesModel.setData(typesModel.index(index, 0), checked, TypeModel.TypeRoleChecked)
                             scale: 0.7
                             topPadding: 0
                             bottomPadding: 0
@@ -125,6 +128,7 @@ Row {
                         CheckBox {
                             checkable: true
                             checked: categoryChecked
+                            onToggled: categoriesModel.setData(categoriesModel.index(index, 0), checked, CategoryModel.CategoryRoleChecked)
                             scale: 0.7
                             topPadding: 0
                             bottomPadding: 0

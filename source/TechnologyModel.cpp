@@ -49,9 +49,29 @@ QHash<int, QByteArray> TechnologyModel::roleNames() const noexcept
     return roles;
 }
 
-Qt::ItemFlags TechnologyModel::flags(const QModelIndex& /*index*/) const noexcept
+Qt::ItemFlags TechnologyModel::flags(const QModelIndex& index) const noexcept
 {
-    return Qt::NoItemFlags;
+    if (!index.isValid()) {
+        return Qt::ItemIsEnabled;
+    }
+
+    return QAbstractListModel::flags(index) | Qt::ItemIsEditable;
+}
+
+bool TechnologyModel::setData(const QModelIndex& index, const QVariant& value, const int role) noexcept
+{
+    if (index.row() < allTechnologies.count()) {
+        if (role == TechnologyRoleChecked) {
+            // Update the value
+            allTechnologies[index.row()].checked = value.toBool();
+            emit dataChanged(index, index, {role});
+            return true;
+        }
+        // This is not allowed
+        QByteArray data(roleNames()[role]);
+        qDebug() << "UI Tried to update menu item: " << data.data();
+    }
+    return false;
 }
 
 void TechnologyModel::load(QList<QString>& technologies) noexcept

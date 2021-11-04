@@ -49,9 +49,29 @@ QHash<int, QByteArray> CategoryModel::roleNames() const noexcept
     return roles;
 }
 
-Qt::ItemFlags CategoryModel::flags(const QModelIndex& /*index*/) const noexcept
+Qt::ItemFlags CategoryModel::flags(const QModelIndex& index) const noexcept
 {
-    return Qt::NoItemFlags;
+    if (!index.isValid()) {
+        return Qt::ItemIsEnabled;
+    }
+
+    return QAbstractListModel::flags(index) | Qt::ItemIsEditable;
+}
+
+bool CategoryModel::setData(const QModelIndex& index, const QVariant& value, const int role) noexcept
+{
+    if (index.row() < allCategories.count()) {
+        if (role == CategoryRoleChecked) {
+            // Update the value
+            allCategories[index.row()].checked = value.toBool();
+            emit dataChanged(index, index, {role});
+            return true;
+        }
+        // This is not allowed
+        QByteArray data(roleNames()[role]);
+        qDebug() << "UI Tried to update menu item: " << data.data();
+    }
+    return false;
 }
 
 void CategoryModel::load(QList<QString>& categories) noexcept

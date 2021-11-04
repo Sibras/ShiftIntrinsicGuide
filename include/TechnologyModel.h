@@ -82,6 +82,16 @@ public:
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
 
     /**
+     * Updates the value of a specific list element.
+     * @note Used Automatically by Qt to set a value should the user change it in the UI.
+     * @param index Zero-based index of the list item in the model.
+     * @param value The new value.
+     * @param role  (Optional) The role to set (This controls what data element is updated).
+     * @return True if it succeeds, false if it fails.
+     */
+    bool setData(const QModelIndex& index, const QVariant& value, int role) noexcept override;
+
+    /**
      * Loads this model.
      * @param [in,out] technologies The data to load.
      */

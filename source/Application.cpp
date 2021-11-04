@@ -46,6 +46,9 @@ int Application::run() noexcept
     engine.rootContext()->setContextProperty("technologiesModel", &technologiesModel);
     engine.rootContext()->setContextProperty("typesModel", &typesModel);
     engine.rootContext()->setContextProperty("categoriesModel", &categoriesModel);
+    qmlRegisterUncreatableType<TechnologyModel>("ShiftIntrinsicGuide", 1, 0, "TechnologyModel", "");
+    qmlRegisterUncreatableType<CategoryModel>("ShiftIntrinsicGuide", 1, 0, "CategoryModel", "");
+    qmlRegisterUncreatableType<TypeModel>("ShiftIntrinsicGuide", 1, 0, "TypeModel", "");
 
     // Load the UI with the default QML file
     engine.load(QUrl(QStringLiteral("qrc:/qml/source/main.qml")));

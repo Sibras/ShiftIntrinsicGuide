@@ -46,9 +46,29 @@ QHash<int, QByteArray> TypeModel::roleNames() const noexcept
     return roles;
 }
 
-Qt::ItemFlags TypeModel::flags(const QModelIndex& /*index*/) const noexcept
+Qt::ItemFlags TypeModel::flags(const QModelIndex& index) const noexcept
 {
-    return Qt::NoItemFlags;
+    if (!index.isValid()) {
+        return Qt::ItemIsEnabled;
+    }
+
+    return QAbstractListModel::flags(index) | Qt::ItemIsEditable;
+}
+
+bool TypeModel::setData(const QModelIndex& index, const QVariant& value, const int role) noexcept
+{
+    if (index.row() < allTypes.count()) {
+        if (role == TypeRoleChecked) {
+            // Update the value
+            allTypes[index.row()].checked = value.toBool();
+            emit dataChanged(index, index, {role});
+            return true;
+        }
+        // This is not allowed
+        QByteArray data(roleNames()[role]);
+        qDebug() << "UI Tried to update menu item: " << data.data();
+    }
+    return false;
 }
 
 void TypeModel::load(QList<QString>& types) noexcept
