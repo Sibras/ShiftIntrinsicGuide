@@ -66,7 +66,6 @@ target_sources(ShiftIntrinsicGuide PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/source/CategoryModel.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/Downloader.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/DataProvider.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/qml.qrc"
 )
 
 target_compile_features(ShiftIntrinsicGuide
@@ -86,9 +85,19 @@ target_link_libraries(ShiftIntrinsicGuide PRIVATE
     Qt6::Concurrent
 )
 
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "Header Files" REGULAR_EXPRESSION "*.hpp")
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "Header Files" REGULAR_EXPRESSION "*.h")
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "Source Files" REGULAR_EXPRESSION "*.cpp")
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "Source Files" REGULAR_EXPRESSION "*.inl")
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "Source Files" REGULAR_EXPRESSION "*.qml")
+
+qt_add_qml_module(ShiftIntrinsicGuide
+    URI qml
+    VERSION 1.0
+    QML_FILES    
+    "source/main.qml"
+    "source/Page1.qml"
+    "source/MenuView.qml"
+    "source/IntrinsicView.qml"
+)
 
 include(GNUInstallDirs)
 install(TARGETS ShiftIntrinsicGuide

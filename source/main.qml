@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
+import QtQuick.Controls.Universal
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 ApplicationWindow {
@@ -23,6 +23,7 @@ ApplicationWindow {
     width: 1920
     height: 1080
     title: "Shift Intrinsic Guide"
+    Universal.theme: Universal.Dark
 
     Item {
         anchors.centerIn: parent

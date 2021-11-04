@@ -48,10 +48,10 @@ int Application::run() noexcept
     engine.rootContext()->setContextProperty("categoriesModel", &categoriesModel);
 
     // Load the UI with the default QML file
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/source/main.qml")));
 
-    if (!engine.rootObjects().isEmpty()) {
-        // return 1;
+    if (engine.rootObjects().isEmpty()) {
+        return 1;
     }
 
     // Queue up the model initialisation
