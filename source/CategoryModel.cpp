@@ -29,7 +29,7 @@ int CategoryModel::rowCount(const QModelIndex& /*parameter1*/) const noexcept
 
 QVariant CategoryModel::data(const QModelIndex& index, const int role) const noexcept
 {
-    if (index.row() < allCategories.count()) {
+    if (index.row() >= 0 && index.row() < allCategories.count()) {
         switch (role) {
             case CategoryRoleName:
                 return allCategories.at(index.row()).name;
@@ -65,6 +65,7 @@ bool CategoryModel::setData(const QModelIndex& index, const QVariant& value, con
             // Update the value
             allCategories[index.row()].checked = value.toBool();
             emit dataChanged(index, index, {role});
+            emit categoriesyChanged();
             return true;
         }
         // This is not allowed

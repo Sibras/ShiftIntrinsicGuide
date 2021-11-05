@@ -21,9 +21,11 @@
 
 class TypeModel final : public QAbstractListModel
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
+    friend class Application;
+
     TypeModel(const TypeModel& other) = delete;
 
     TypeModel(TypeModel&& other) noexcept = delete;
@@ -51,7 +53,7 @@ public:
 
     /**
      * Get the number of rows in the model.
-     * @note Used Automatically by Qt to get number of motors in the list.
+     * @note Used Automatically by Qt to get number of items in the list.
      * @param parameter1 (Optional) The first parameter.
      * @return The number of rows.
      */
@@ -94,8 +96,12 @@ public:
     /**
      * Loads this model.
      * @param [in,out] types The data to load.
+     * @note This is used to force the model to update all data. This must be run from the primary thread.
      */
     void load(QList<QString>& types) noexcept;
+
+    /** Notify that internal data has changed. */
+    Q_SIGNAL void typesChanged() const;
 
 private:
     QList<StringChecked> allTypes; /**< The list of all known intrinsic types */

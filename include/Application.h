@@ -18,6 +18,7 @@
 #include "CategoryModel.h"
 #include "DataProvider.h"
 #include "IntrinsicModel.h"
+#include "IntrinsicProxyModel.h"
 #include "TechnologyModel.h"
 #include "TypeModel.h"
 
@@ -27,12 +28,17 @@
 
 class Application final : public QObject
 {
-    Q_OBJECT;
-    Q_PROPERTY(bool hasOKDialog READ getHasOKDialog NOTIFY hasOKDialogChanged);
-    Q_PROPERTY(QString OKDialogTitle READ getOKDialogTitle NOTIFY notifyOKDialogTitleChanged);
-    Q_PROPERTY(float progress READ getProgress WRITE setProgress NOTIFY notifyProgressChanged);
-    Q_PROPERTY(bool isLoaded READ getLoaded NOTIFY isLoadedChanged);
-    Q_PROPERTY(QString LoadingTitle READ getLoadingTitle NOTIFY notifyLoadingTitleChanged);
+    Q_OBJECT
+
+    Q_PROPERTY(bool hasOKDialog READ getHasOKDialog NOTIFY hasOKDialogChanged)
+
+    Q_PROPERTY(QString OKDialogTitle READ getOKDialogTitle NOTIFY notifyOKDialogTitleChanged)
+
+    Q_PROPERTY(float progress READ getProgress WRITE setProgress NOTIFY notifyProgressChanged)
+
+    Q_PROPERTY(bool isLoaded READ getLoaded NOTIFY isLoadedChanged)
+
+    Q_PROPERTY(QString LoadingTitle READ getLoadingTitle NOTIFY notifyLoadingTitleChanged)
 
 public:
     Application(const Application&) = delete;
@@ -123,7 +129,7 @@ public:
      * Sets the loading title.
      * @param title The new title.
      */
-    void setLoadingTitle(const QString& title);
+    void setLoadingTitle(const QString& title) noexcept;
 
     /** Notify the GUI that the available loading title has changed. */
     Q_SIGNAL void notifyLoadingTitleChanged() const;
@@ -132,7 +138,7 @@ private:
     /**
      * Sets up the internal data models
      */
-    Q_SLOT void setupData();
+    Q_SLOT void setupData() noexcept;
 
     QGuiApplication app;
     QQmlApplicationEngine engine;
@@ -140,6 +146,7 @@ private:
     TypeModel typesModel;
     CategoryModel categoriesModel;
     IntrinsicModel intrinsicsModel;
+    IntrinsicProxyModel intrinsicProxyModel;
 
     struct OKDialogData final
     {

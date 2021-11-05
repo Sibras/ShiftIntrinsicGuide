@@ -27,7 +27,7 @@ class QNetworkReply;
 
 class Downloader final : public QObject
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     /**

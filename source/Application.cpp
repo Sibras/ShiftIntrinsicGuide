@@ -43,6 +43,8 @@ int Application::run() noexcept
     // Register the GUI data model
     engine.rootContext()->setContextProperty("application", this);
     engine.rootContext()->setContextProperty("intrinsicsModel", &intrinsicsModel);
+    intrinsicProxyModel.setSourceModel(&intrinsicsModel);
+    engine.rootContext()->setContextProperty("intrinsicProxyModel", &intrinsicProxyModel);
     engine.rootContext()->setContextProperty("technologiesModel", &technologiesModel);
     engine.rootContext()->setContextProperty("typesModel", &typesModel);
     engine.rootContext()->setContextProperty("categoriesModel", &categoriesModel);
@@ -139,13 +141,13 @@ QString Application::getLoadingTitle() const noexcept
     return loading;
 }
 
-void Application::setLoadingTitle(const QString& title)
+void Application::setLoadingTitle(const QString& title) noexcept
 {
     loading = title;
     emit notifyLoadingTitleChanged();
 }
 
-void Application::setupData()
+void Application::setupData() noexcept
 {
     if (dataLoad.result()) {
         // Setup data models
@@ -153,6 +155,14 @@ void Application::setupData()
         typesModel.load(provider.getData().allTypes);
         categoriesModel.load(provider.getData().allCategories);
         intrinsicsModel.load(provider.getData().instructions);
+
+        intrinsicProxyModel.load(technologiesModel.allTechnologies, typesModel.allTypes, categoriesModel.allCategories);
+
+        connect(&technologiesModel, &TechnologyModel::technologyChanged, &intrinsicProxyModel,
+            &IntrinsicProxyModel::filterUpdated);
+        connect(&typesModel, &TypeModel::typesChanged, &intrinsicProxyModel, &IntrinsicProxyModel::filterUpdated);
+        connect(&categoriesModel, &CategoryModel::categoriesyChanged, &intrinsicProxyModel,
+            &IntrinsicProxyModel::filterUpdated);
 
         // Clear data provider
         provider.clear();

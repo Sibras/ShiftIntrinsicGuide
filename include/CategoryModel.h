@@ -21,9 +21,11 @@
 
 class CategoryModel final : public QAbstractListModel
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
+    friend class Application;
+
     CategoryModel(const CategoryModel& other) = delete;
 
     CategoryModel(CategoryModel&& other) noexcept = delete;
@@ -38,7 +40,7 @@ public:
         CategoryRoleChecked = Qt::UserRole
     };
 
-    Q_ENUM(CategoryRole);
+    Q_ENUM(CategoryRole)
 
     /**
      * Constructor.
@@ -51,7 +53,7 @@ public:
 
     /**
      * Get the number of rows in the model.
-     * @note Used Automatically by Qt to get number of motors in the list.
+     * @note Used Automatically by Qt to get number of items in the list.
      * @param parameter1 (Optional) The first parameter.
      * @return The number of rows.
      */
@@ -97,6 +99,9 @@ public:
      * @note This is used to force the model to update all data. This must be run from the primary thread.
      */
     void load(QList<QString>& categories) noexcept;
+
+    /** Notify that internal data has changed. */
+    Q_SIGNAL void categoriesyChanged() const;
 
 private:
     QList<StringChecked> allCategories; /**< The list of all known intrinsic categories */

@@ -21,9 +21,11 @@
 
 class TechnologyModel final : public QAbstractListModel
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
+    friend class Application;
+
     TechnologyModel(const TechnologyModel& other) = delete;
 
     TechnologyModel(TechnologyModel&& other) noexcept = delete;
@@ -38,7 +40,7 @@ public:
         TechnologyRoleChecked = Qt::UserRole
     };
 
-    Q_ENUM(TechnologyRole);
+    Q_ENUM(TechnologyRole)
 
     /**
      * Constructor.
@@ -51,7 +53,7 @@ public:
 
     /**
      * Get the number of rows in the model.
-     * @note Used Automatically by Qt to get number of motors in the list.
+     * @note Used Automatically by Qt to get number of items in the list.
      * @param parameter1 (Optional) The first parameter.
      * @return The number of rows.
      */
@@ -94,8 +96,12 @@ public:
     /**
      * Loads this model.
      * @param [in,out] technologies The data to load.
+     * @note This is used to force the model to update all data. This must be run from the primary thread.
      */
     void load(QList<QString>& technologies) noexcept;
+
+    /** Notify that internal data has changed. */
+    Q_SIGNAL void technologyChanged() const;
 
 private:
     QList<StringChecked> allTechnologies; /**< The list of all known intrinsic technologies */

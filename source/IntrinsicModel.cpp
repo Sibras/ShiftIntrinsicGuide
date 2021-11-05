@@ -22,19 +22,47 @@ IntrinsicModel::IntrinsicModel(QObject* parent) noexcept
     : QAbstractListModel(parent)
 {}
 
-int IntrinsicModel::rowCount(const QModelIndex& parameter1) const noexcept
+int IntrinsicModel::rowCount(const QModelIndex& /*parameter1*/) const noexcept
 {
-    return 0;
+    return static_cast<int>(instructions.count());
 }
 
-QVariant IntrinsicModel::data(const QModelIndex& index, int role) const noexcept
+QVariant IntrinsicModel::data(const QModelIndex& index, const int role) const noexcept
 {
+    if (index.row() >= 0 && index.row() < instructions.count()) {
+        switch (role) {
+            case IntrinsicRoleName:
+                return instructions.at(index.row()).name;
+            case IntrinsicRoleDescription:
+                return instructions.at(index.row()).description;
+            case IntrinsicRoleOperation:
+                return instructions.at(index.row()).operation;
+            case IntrinsicRoleHeader:
+                return instructions.at(index.row()).header;
+            case IntrinsicRoleTechnology:
+                return instructions.at(index.row()).technology;
+            case IntrinsicRoleTypes:
+                return instructions.at(index.row()).types;
+            case IntrinsicRoleCategories:
+                return instructions.at(index.row()).categories;
+            case IntrinsicRoleInstruction:
+                return instructions.at(index.row()).instruction;
+            case IntrinsicRoleMeasurements:
+                return QVariant::fromValue(instructions.at(index.row()).measurements);
+            default:
+                break;
+        }
+    }
     return QVariant();
 }
 
 QHash<int, QByteArray> IntrinsicModel::roleNames() const noexcept
 {
-    static const QHash<int, QByteArray> roles{};
+    static const QHash<int, QByteArray> roles{{IntrinsicRoleName, "intrinsicName"},
+        {IntrinsicRoleDescription, "intrinsicDescription"}, {IntrinsicRoleOperation, "intrinsicOperation"},
+        {IntrinsicRoleHeader, "intrinsicHeader"}, {IntrinsicRoleTechnology, "intrinsicTechnology"},
+        {IntrinsicRoleTypes, "intrinsicTypes"}, {IntrinsicRoleCategories, "intrinsicCategories"},
+        {IntrinsicRoleInstruction, "intrinsicInstruction"}, {IntrinsicRoleMeasurements, "intrinsicMeasurements"}};
     return roles;
 }
 
@@ -44,4 +72,9 @@ Qt::ItemFlags IntrinsicModel::flags(const QModelIndex& /*index*/) const noexcept
 }
 
 void IntrinsicModel::load(QList<Instruction>& data) noexcept
-{}
+{
+    emit beginInsertRows(QModelIndex(), 0, static_cast<int>(data.count()) - 1);
+    // Copy in data
+    instructions = std::move(data);
+    emit endInsertRows();
+}

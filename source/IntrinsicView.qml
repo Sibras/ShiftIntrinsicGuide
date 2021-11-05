@@ -6,7 +6,7 @@ ListView {
     id: intrinsicView
     anchors.fill: parent
     boundsBehavior: Flickable.StopAtBounds
-    model: intrinsicsModel
+    model: intrinsicProxyModel
 
     delegate: ItemDelegate {
         width: intrinsicView.width - 25
@@ -16,7 +16,15 @@ ListView {
         topPadding: 6
         contentItem: RowLayout {
             spacing: 0
-
+            Label {
+                text: qsTr("%1").arg(intrinsicName)
+                leftPadding: 10
+                topPadding: 0
+                bottomPadding: 0
+                Layout.preferredWidth: intrinsicView.width - 25 - 10 - 6
+                Layout.minimumWidth: Layout.preferredWidth
+                verticalAlignment: Text.AlignVCenter
+            }
         }
     }
     ScrollBar.vertical: ScrollBar {

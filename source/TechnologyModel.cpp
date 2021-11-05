@@ -29,7 +29,7 @@ int TechnologyModel::rowCount(const QModelIndex& /*parameter1*/) const noexcept
 
 QVariant TechnologyModel::data(const QModelIndex& index, const int role) const noexcept
 {
-    if (index.row() < allTechnologies.count()) {
+    if (index.row() >= 0 && index.row() < allTechnologies.count()) {
         switch (role) {
             case TechnologyRoleName:
                 return allTechnologies.at(index.row()).name;
@@ -65,6 +65,7 @@ bool TechnologyModel::setData(const QModelIndex& index, const QVariant& value, c
             // Update the value
             allTechnologies[index.row()].checked = value.toBool();
             emit dataChanged(index, index, {role});
+            emit technologyChanged();
             return true;
         }
         // This is not allowed

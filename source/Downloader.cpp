@@ -16,8 +16,6 @@
 
 #include "Downloader.h"
 
-#include "Application.h"
-
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>

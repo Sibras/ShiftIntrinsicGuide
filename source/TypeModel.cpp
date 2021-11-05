@@ -27,7 +27,7 @@ int TypeModel::rowCount(const QModelIndex& /*parameter1*/) const noexcept
 
 QVariant TypeModel::data(const QModelIndex& index, const int role) const noexcept
 {
-    if (index.row() < allTypes.count()) {
+    if (index.row() >= 0 && index.row() < allTypes.count()) {
         switch (role) {
             case TypeRoleName:
                 return allTypes.at(index.row()).name;
@@ -62,6 +62,7 @@ bool TypeModel::setData(const QModelIndex& index, const QVariant& value, const i
             // Update the value
             allTypes[index.row()].checked = value.toBool();
             emit dataChanged(index, index, {role});
+            emit typesChanged();
             return true;
         }
         // This is not allowed

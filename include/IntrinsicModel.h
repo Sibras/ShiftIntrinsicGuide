@@ -21,7 +21,7 @@
 
 class IntrinsicModel final : public QAbstractListModel
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     IntrinsicModel(const IntrinsicModel& other) = delete;
@@ -31,6 +31,21 @@ public:
     IntrinsicModel& operator=(const IntrinsicModel& other) = delete;
 
     IntrinsicModel& operator=(IntrinsicModel&& other) noexcept = delete;
+
+    enum IntrinsicRole
+    {
+        IntrinsicRoleName = Qt::DisplayRole,
+        IntrinsicRoleDescription = Qt::UserRole,
+        IntrinsicRoleOperation,
+        IntrinsicRoleHeader,
+        IntrinsicRoleTechnology,
+        IntrinsicRoleTypes,
+        IntrinsicRoleCategories,
+        IntrinsicRoleInstruction,
+        IntrinsicRoleMeasurements
+    };
+
+    Q_ENUM(IntrinsicRole)
 
     /**
      * Constructor.
@@ -43,7 +58,7 @@ public:
 
     /**
      * Get the number of rows in the model.
-     * @note Used Automatically by Qt to get number of motors in the list.
+     * @note Used Automatically by Qt to get number of items in the list.
      * @param parameter1 (Optional) The first parameter.
      * @return The number of rows.
      */
