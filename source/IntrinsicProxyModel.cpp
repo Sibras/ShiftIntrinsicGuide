@@ -24,42 +24,65 @@ IntrinsicProxyModel::IntrinsicProxyModel(QObject* parent)
 
 bool IntrinsicProxyModel::filterAcceptsRow(const int sourceRow, const QModelIndex& sourceParent) const
 {
+    // Check if model has been initialised
     if (allTechnologies == nullptr) {
         return false;
     }
 
+    // Check if the index is valid
     const QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
     if (!index.isValid()) {
         return false;
     }
 
-    const auto valTech = std::find(allTechnologies->cbegin(), allTechnologies->cend(),
-        sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTechnology).toString());
-    bool valType = false;
-    for (const auto& j : sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTypes).toStringList()) {
-        for (const auto& i : *allTypes) {
-            if (i.name == j) {
-                valType = i.checked;
+    if (const bool valTech = noTechChecked ||
+            std::find(allTechnologies->cbegin(), allTechnologies->cend(),
+                sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTechnology).toString())
+                ->checked;
+        !valTech) {
+        return false;
+    }
+    bool valType = noTypeChecked;
+    if (!valType) {
+        for (const auto& j : sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTypes).toStringList()) {
+            for (const auto& i : *allTypes) {
+                if (i.name == j) {
+                    valType = i.checked;
+                    break;
+                }
+            }
+            if (valType) {
                 break;
             }
         }
-        if (valType) {
-            break;
-        }
     }
-    bool valCat = false;
-    for (const auto& j : sourceModel()->data(index, IntrinsicModel::IntrinsicRoleCategories).toStringList()) {
-        for (const auto& i : *allCategories) {
-            if (i.name == j) {
-                valCat = i.checked;
+    if (!valType) {
+        return false;
+    }
+    bool valCat = noCatsChecked;
+    if (!valCat) {
+        for (const auto& j : sourceModel()->data(index, IntrinsicModel::IntrinsicRoleCategories).toStringList()) {
+            for (const auto& i : *allCategories) {
+                if (i.name == j) {
+                    valCat = i.checked;
+                    break;
+                }
+            }
+            if (valCat) {
                 break;
             }
         }
-        if (valCat) {
-            break;
-        }
     }
-    return valTech->checked && valType && valCat;
+    if (!valCat) {
+        return false;
+    }
+
+    // Check the search string
+    if (!search.isEmpty() &&
+        !sourceModel()->data(index, IntrinsicModel::IntrinsicRoleName).toString().contains(search)) {
+        return false;
+    }
+    return true;
 }
 
 bool IntrinsicProxyModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
@@ -85,5 +108,33 @@ void IntrinsicProxyModel::load(const QList<StringChecked>& technologies, const Q
 
 void IntrinsicProxyModel::filterUpdated()
 {
+    // Check if any options are checked at all and cache the result for faster searching
+    noTechChecked = true;
+    for (auto& i : *allTechnologies) {
+        if (i.checked) {
+            noTechChecked = false;
+            break;
+        }
+    }
+    noTypeChecked = true;
+    for (auto& i : *allTypes) {
+        if (i.checked) {
+            noTypeChecked = false;
+            break;
+        }
+    }
+    noCatsChecked = true;
+    for (auto& i : *allCategories) {
+        if (i.checked) {
+            noCatsChecked = false;
+            break;
+        }
+    }
+    invalidateFilter();
+}
+
+void IntrinsicProxyModel::setFilterExpression(const QString& filter)
+{
+    search = filter;
     invalidateFilter();
 }

@@ -65,9 +65,37 @@ Item {
         anchors.rightMargin: 50
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
-        IntrinsicView {
-            id: intrinsicView
-            anchors.fill: parent
+        TextField {
+            id: intrinsicSearch
+            width: parent.width - 25
+            height: 35
+            verticalAlignment: Text.AlignVCenter
+            rightPadding: 6
+            bottomPadding: 6
+            leftPadding: 6
+            topPadding: 6
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.topMargin: 40
+            anchors.rightMargin: 50
+            anchors.leftMargin: 50
+            placeholderText: "Search"
+            onEditingFinished: intrinsicProxyModel.setFilterExpression(text)
+        }
+        Pane {
+            anchors.top: parent.top
+            anchors.topMargin: intrinsicSearch.height + 35 + 35
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            anchors.rightMargin: 3
+            anchors.leftMargin: 5
+            IntrinsicView {
+                id: intrinsicView
+                anchors.fill: parent
+            }
         }
     }
 

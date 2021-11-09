@@ -61,8 +61,18 @@ public:
     /** Signal that the filter need to be updated */
     Q_SLOT void filterUpdated();
 
+    /**
+     * Sets filter expression from search box.
+     * @param filter Specifies the filter.
+     */
+    Q_SLOT void setFilterExpression(const QString& filter);
+
 private:
     const QList<StringChecked>* allTechnologies = nullptr; /**< The list of all known intrinsic technologies */
-    const QList<StringChecked>* allCategories = nullptr;   /**< The list of all known intrinsic categories */
     const QList<StringChecked>* allTypes = nullptr;        /**< The list of all known intrinsic types */
+    const QList<StringChecked>* allCategories = nullptr;   /**< The list of all known intrinsic categories */
+    bool noTechChecked = true;                             /**< True if no technologies are checked */
+    bool noTypeChecked = true;                             /**< True if no types are checked */
+    bool noCatsChecked = true;                             /**< True if no categories are checked */
+    QString search;                                        /**< The search string */
 };
