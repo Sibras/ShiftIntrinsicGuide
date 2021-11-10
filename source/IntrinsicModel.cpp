@@ -44,9 +44,9 @@ QVariant IntrinsicModel::data(const QModelIndex& index, const int role) const no
             case IntrinsicRoleTechnology:
                 return instructions.at(index.row()).technology;
             case IntrinsicRoleTypes:
-                return instructions.at(index.row()).types;
+                return QVariant::fromValue(instructions.at(index.row()).types);
             case IntrinsicRoleCategories:
-                return instructions.at(index.row()).categories;
+                return QVariant::fromValue(instructions.at(index.row()).categories);
             case IntrinsicRoleInstruction:
                 return instructions.at(index.row()).instruction;
             case IntrinsicRoleMeasurements:
@@ -74,7 +74,7 @@ Qt::ItemFlags IntrinsicModel::flags(const QModelIndex& /*index*/) const noexcept
     return Qt::NoItemFlags;
 }
 
-void IntrinsicModel::load(QList<Instruction>& data) noexcept
+void IntrinsicModel::load(QList<InstructionIndexed>& data) noexcept
 {
     emit beginInsertRows(QModelIndex(), 0, static_cast<int>(data.count()) - 1);
     // Copy in data

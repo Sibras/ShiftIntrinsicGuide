@@ -7,12 +7,14 @@ Row {
     id: menuView
     anchors.fill: parent
     leftPadding: 6
+    
     Flickable {
         width: parent.width
         height: parent.height
         flickableDirection: Flickable.VerticalFlick
         contentHeight: contentItem.childrenRect.height
         boundsBehavior: Flickable.StopAtBounds
+        clip: true
 
         Column {
             Label {
@@ -43,11 +45,7 @@ Row {
                             topPadding: 0
                             bottomPadding: 0
                             background: Rectangle {
-                                color: (index%16==0) ? "lemonchiffon" : (index%16==1) ? "honeydew" : (index%16==2) ? "palegreen" : (index%16==3) ? "darkseagreen"
-                                    : (index%16==4) ? "paleturquoise" : (index%16==5) ?  "mediumaquamarine" : (index%16==6) ? "cadetblue"
-                                    : (index%16==7) ? "steelblue" : (index%16==8) ? "mediumslateblue" : (index%16==9) ? "palevioletred" : (index%16==10) ? "indianred"
-                                    : (index%16==11) ? "darksalmon" : (index%16==12) ? "sienna" : (index%16==13) ? "burlywood" : (index%16==14) ? "sandybrown"
-                                    : "goldenrod"
+                                color: catColours[index]
                                 radius: 25
                             }
                         }

@@ -7,6 +7,7 @@ ListView {
     anchors.fill: parent
     boundsBehavior: Flickable.StopAtBounds
     model: intrinsicProxyModel
+    clip: true
 
     delegate: ItemDelegate {
         width: intrinsicView.width - 25
@@ -16,9 +17,15 @@ ListView {
         topPadding: 6
         contentItem: RowLayout {
             spacing: 0
+            Rectangle {
+                color: catColours[intrinsicTechnology]
+                width: 15
+                height: 20
+                radius: 25
+            }
             Label {
                 text: intrinsicFullName
-                leftPadding: 10
+                leftPadding: 5
                 topPadding: 0
                 bottomPadding: 0
                 Layout.preferredWidth: intrinsicView.width - 25 - 10 - 6

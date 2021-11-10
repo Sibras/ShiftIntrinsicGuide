@@ -93,8 +93,8 @@ public:
      * Loads this model.
      * @param [in,out] data The data to load.
      */
-    void load(QList<Instruction>& data) noexcept;
+    void load(QList<InstructionIndexed>& data) noexcept;
 
 private:
-    QList<Instruction> instructions; /**< The list of all known intrinsics */
+    QList<InstructionIndexed> instructions; /**< The list of all known intrinsics */
 };

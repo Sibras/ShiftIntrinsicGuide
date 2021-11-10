@@ -35,22 +35,14 @@ bool IntrinsicProxyModel::filterAcceptsRow(const int sourceRow, const QModelInde
         return false;
     }
 
-    if (const bool valTech = noTechChecked ||
-            std::find(allTechnologies->cbegin(), allTechnologies->cend(),
-                sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTechnology).toString())
-                ->checked;
-        !valTech) {
+    if (!noTechChecked &&
+        !(*allTechnologies)[sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTechnology).toUInt()].checked) {
         return false;
     }
     bool valType = noTypeChecked;
     if (!valType) {
-        for (const auto& j : sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTypes).toStringList()) {
-            for (const auto& i : *allTypes) {
-                if (i.name == j) {
-                    valType = i.checked;
-                    break;
-                }
-            }
+        for (const auto& j : sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTypes).toList()) {
+            valType = (*allTypes)[j.toUInt()].checked;
             if (valType) {
                 break;
             }
@@ -61,13 +53,8 @@ bool IntrinsicProxyModel::filterAcceptsRow(const int sourceRow, const QModelInde
     }
     bool valCat = noCatsChecked;
     if (!valCat) {
-        for (const auto& j : sourceModel()->data(index, IntrinsicModel::IntrinsicRoleCategories).toStringList()) {
-            for (const auto& i : *allCategories) {
-                if (i.name == j) {
-                    valCat = i.checked;
-                    break;
-                }
-            }
+        for (const auto& j : sourceModel()->data(index, IntrinsicModel::IntrinsicRoleCategories).toList()) {
+            valCat = (*allCategories)[j.toUInt()].checked;
             if (valCat) {
                 break;
             }

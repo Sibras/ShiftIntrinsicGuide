@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-#define QT_NO_DEBUG_OUTPUT
-
 #include "DataProvider.h"
 
 #include "Application.h"
 #include "Downloader.h"
 
-constexpr uint32_t fileVersion = 0x010000;
+constexpr uint32_t fileVersion = 0x010200;
 constexpr uint32_t fileChecksum = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
@@ -153,6 +151,8 @@ bool DataProvider::create() noexcept
         {"UI32", "Integer Unsigned 32 (uint32)"}, {"UI64", "Integer Unsigned 64 (uint64)"},
         {"UI8", "Integer Unsigned 8 (uint8)"}};
 
+    QList<Instruction> instructions;
+
     // Loop through each element and get information
     for (auto i = root.firstChild(); !i.isNull(); i = i.nextSibling()) {
         // Check if the child tag name is an 'intrinsic'
@@ -169,9 +169,11 @@ bool DataProvider::create() noexcept
             QList<QString> types, cpuids, categories;
             QString description, operation, header, instruction, xed;
             QString returnParam;
-            QList<QString> parameters;
+            QList<QPair<QString, QString>> parameters;
             if (name.isEmpty()) {
+#ifdef _DEBUG
                 qDebug() << "Intrinsic element in xml file did not have name attribute: " + node.toText().data();
+#endif
                 continue;
             }
             // Get each child nodes data
@@ -200,7 +202,7 @@ bool DataProvider::create() noexcept
                             QString pretty = typesPretty.contains(etype) ? typesPretty[etype] : std::move(etype);
                             if (pretty == "M128" || pretty == "M256" || pretty == "M512") {
                                 if (returnParam.contains("void")) {
-                                    pretty = "";
+                                    pretty.clear();
                                 } else if (returnParam.contains("__m128i") || returnParam.contains("__m256i") ||
                                     returnParam.contains("__m512i")) {
                                     pretty = "Integer (variable)";
@@ -214,7 +216,9 @@ bool DataProvider::create() noexcept
                                     returnParam.contains("__m512h")) {
                                     pretty = typesPretty["FP16"];
                                 } else {
+#ifdef _DEBUG
                                     qDebug() << "Unknown type: " << returnParam;
+#endif
                                     pretty = "";
                                 }
                             }
@@ -227,13 +231,13 @@ bool DataProvider::create() noexcept
                         // Has same attributes as 'return'
                         QString typeParam = childE.attribute("type", "");
                         QString nameParam = childE.attribute("varname", "");
-                        parameters.emplaceBack(typeParam + " " + nameParam);
+                        parameters.emplaceBack(qMakePair(typeParam, nameParam));
                         if (childE.hasAttribute("etype")) {
                             if (QString etype = childE.attribute("etype", ""); etype != "IMM") {
                                 QString pretty = typesPretty.contains(etype) ? typesPretty[etype] : std::move(etype);
                                 if (pretty == "M128" || pretty == "M256" || pretty == "M512") {
                                     if (typeParam.contains("void")) {
-                                        pretty = "";
+                                        pretty.clear();
                                     } else if (typeParam.contains("__m128i") || typeParam.contains("__m256i") ||
                                         typeParam.contains("__m512i")) {
                                         pretty = "Integer (variable)";
@@ -247,7 +251,9 @@ bool DataProvider::create() noexcept
                                         typeParam.contains("__m512h")) {
                                         pretty = typesPretty["FP16"];
                                     } else {
+#ifdef _DEBUG
                                         qDebug() << "Unknown type: " << typeParam;
+#endif
                                         pretty = "";
                                     }
                                 }
@@ -268,7 +274,9 @@ bool DataProvider::create() noexcept
                         // Has attributes xed, form, name
                         if (!xed.isEmpty()) {
                             // Can have multiple xeds if intrinsic can map to different instructions
+#ifdef _DEBUG
                             qDebug() << "Intrinsic has multiple xeds: " + name + ", xed: " + xed;
+#endif
                         } else {
                             // Always take the first instruction form
                             xed = childE.attribute("xed", "");
@@ -388,11 +396,15 @@ bool DataProvider::create() noexcept
                     // Go through the list a second time and this time skip checking the extension
                     secondLoop = true;
                 }
+#ifdef _DEBUG
                 if (!found) {
                     qDebug() << "Intrinsic uops data not found: " + name + ", xed: " + xed;
                 }
+#endif
             } else {
+#ifdef _DEBUG
                 qDebug() << "Intrinsic element in xml file did not have xed element: " + name;
+#endif
             }
 
             // Add to list of known techs/types
@@ -410,23 +422,40 @@ bool DataProvider::create() noexcept
                 }
             }
 
-            // Add information to list
-            QString fullName = returnParam;
+            // Generate pretty display name for intrinsic
+            // TODO: Allow for theme specific styling
+            QString fullName = "<font color=\"mediumpurple\">";
+            fullName += returnParam;
+            fullName += "</font>";
             fullName += ' ';
             fullName += name;
             fullName += " (";
             bool first = false;
-            for (auto& k : parameters) {
+            for (auto& [parType, parName] : parameters) {
                 if (first) {
                     fullName += ", ";
                 }
-                fullName += k;
+                fullName += "<font color=\"mediumpurple\">";
+                fullName += parType;
+                fullName += "</font>";
+                QString parNameStyled = "<font color=\"lightseagreen\">";
+                parNameStyled += parName;
+                parNameStyled += "</font>";
+                fullName += ' ' + parNameStyled;
                 first = true;
+                description.replace('"' + parName + '"', parNameStyled);
             }
             fullName += ')';
-            data.instructions.emplaceBack(std::move(fullName), std::move(name), std::move(description),
-                std::move(operation), std::move(header), std::move(tech), std::move(types), std::move(categories),
-                std::move(instruction), std::move(measurements));
+
+            // Add information to list
+            instructions.emplaceBack(std::move(fullName), std::move(name), std::move(description), std::move(operation),
+                std::move(header), std::move(tech), std::move(types), std::move(categories), std::move(instruction),
+                std::move(measurements));
+
+            // Check if shutdown has been called
+            if (parentApp->getLoaded()) {
+                return false;
+            }
         }
     }
 
@@ -440,7 +469,7 @@ bool DataProvider::create() noexcept
     // Try and sort technology by age
     QList<QString> sortTechnologies;
     for (auto& j : data.allTechnologies) {
-        if (j == "MMX") {
+        if (j == "MMX" || j == "AVX") {
             sortTechnologies.emplaceFront(std::move(j));
         } else if (j.startsWith("SSE")) {
             auto find = sortTechnologies.indexOf("AVX");
@@ -448,8 +477,6 @@ bool DataProvider::create() noexcept
         } else if (j == "SSSE3") {
             auto find = sortTechnologies.indexOf("SSE3");
             sortTechnologies.emplace(find + 1, std::move(j));
-        } else if (j == "AVX") {
-            sortTechnologies.emplaceFront(std::move(j));
         } else if (j == "AVX2") {
             auto find = sortTechnologies.indexOf("AVX");
             sortTechnologies.emplace(find + 1, std::move(j));
@@ -464,6 +491,23 @@ bool DataProvider::create() noexcept
         }
     }
     data.allTechnologies.swap(sortTechnologies);
+
+    // Generate indexes for stored instructions
+    for (auto& i : instructions) {
+        const auto tech = static_cast<uint32_t>(data.allTechnologies.indexOf(i.technology));
+        QList<uint32_t> types, categories;
+        for (auto& j : i.types) {
+            types.emplaceBack(static_cast<uint32_t>(data.allTypes.indexOf(j)));
+        }
+        for (auto& j : i.categories) {
+            categories.emplaceBack(static_cast<uint32_t>(data.allCategories.indexOf(j)));
+        }
+        data.instructions.emplaceBack(std::move(i.fullName), std::move(i.name), std::move(i.description),
+            std::move(i.operation), std::move(i.header), tech, std::move(types), std::move(categories),
+            std::move(i.instruction), std::move(i.measurements));
+    }
+
+    std::sort(data.instructions.begin(), data.instructions.end());
 
     // TODO:****************
     // Delete any cache files from disk
@@ -523,7 +567,7 @@ bool DataProvider::downloadCache(
         // Write out file to disk
         parentApp->setLoadingTitle("Adding " + name + " to cache...");
         if (!fileCache.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qDebug() << "Failed to write XML cache: " + fileName;
+            qWarning() << "Failed to write XML cache: " + fileName;
         } else {
             QTextStream stream(&fileCache);
             stream << dataXML.toString();

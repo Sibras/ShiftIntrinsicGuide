@@ -23,6 +23,10 @@ Item {
     width: 1920
     height: 1080
 
+    property variant catColours: ["lemonchiffon", "honeydew", "palegreen", "darkseagreen", "paleturquoise", "mediumaquamarine", 
+        "cadetblue", "steelblue", "mediumslateblue", "palevioletred", "indianred", "darksalmon", "sienna", 
+        "burlywood", "sandybrown", "goldenrod", "white", "white", "white", "white"]
+
     Pane {
         anchors.centerIn: parent
         visible: application.progress !== 1
