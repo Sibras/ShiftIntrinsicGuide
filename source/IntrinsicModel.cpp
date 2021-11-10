@@ -31,6 +31,8 @@ QVariant IntrinsicModel::data(const QModelIndex& index, const int role) const no
 {
     if (index.row() >= 0 && index.row() < instructions.count()) {
         switch (role) {
+            case IntrinsicRoleFullName:
+                return instructions.at(index.row()).fullName;
             case IntrinsicRoleName:
                 return instructions.at(index.row()).name;
             case IntrinsicRoleDescription:
@@ -58,11 +60,12 @@ QVariant IntrinsicModel::data(const QModelIndex& index, const int role) const no
 
 QHash<int, QByteArray> IntrinsicModel::roleNames() const noexcept
 {
-    static const QHash<int, QByteArray> roles{{IntrinsicRoleName, "intrinsicName"},
-        {IntrinsicRoleDescription, "intrinsicDescription"}, {IntrinsicRoleOperation, "intrinsicOperation"},
-        {IntrinsicRoleHeader, "intrinsicHeader"}, {IntrinsicRoleTechnology, "intrinsicTechnology"},
-        {IntrinsicRoleTypes, "intrinsicTypes"}, {IntrinsicRoleCategories, "intrinsicCategories"},
-        {IntrinsicRoleInstruction, "intrinsicInstruction"}, {IntrinsicRoleMeasurements, "intrinsicMeasurements"}};
+    static const QHash<int, QByteArray> roles{{IntrinsicRoleFullName, "intrinsicFullName"},
+        {IntrinsicRoleName, "intrinsicName"}, {IntrinsicRoleDescription, "intrinsicDescription"},
+        {IntrinsicRoleOperation, "intrinsicOperation"}, {IntrinsicRoleHeader, "intrinsicHeader"},
+        {IntrinsicRoleTechnology, "intrinsicTechnology"}, {IntrinsicRoleTypes, "intrinsicTypes"},
+        {IntrinsicRoleCategories, "intrinsicCategories"}, {IntrinsicRoleInstruction, "intrinsicInstruction"},
+        {IntrinsicRoleMeasurements, "intrinsicMeasurements"}};
     return roles;
 }
 

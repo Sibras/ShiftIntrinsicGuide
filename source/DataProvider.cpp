@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
+#define QT_NO_DEBUG_OUTPUT
+
 #include "DataProvider.h"
 
 #include "Application.h"
 #include "Downloader.h"
+
+constexpr uint32_t fileVersion = 0x010000;
+constexpr uint32_t fileChecksum = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
     : parentApp(parent)
@@ -81,6 +86,17 @@ bool DataProvider::load() noexcept
         // Load data from cache
         parentApp->setLoadingTitle("Loading data from cache...");
         QDataStream in(&fileCache);
+        uint32_t check;
+        in >> check;
+        if (check != fileChecksum) {
+            qWarning("File load had invalid checksum");
+            return false;
+        }
+        in >> check;
+        if (check != fileVersion) {
+            qInfo("File version to old, creating new one");
+            return false;
+        }
         in.setVersion(QDataStream::Qt_6_2);
         in >> data;
         addProgress(1.0f);
@@ -96,6 +112,8 @@ bool DataProvider::store() noexcept
         parentApp->setLoadingTitle("Writing data store to disk...");
         // Store data from cache
         QDataStream out(&fileCache);
+        out << fileChecksum;
+        out << fileVersion;
         out.setVersion(QDataStream::Qt_6_2);
         out << data;
         addProgress(1.0f);
@@ -128,6 +146,13 @@ bool DataProvider::create() noexcept
     data.version = root.attribute("version", "3.6.0");
     data.date = QDate::fromString(root.attribute("date", "06/30/2021"), "MM/dd/YYYY");
 
+    QMap<QString, QString> typesPretty = {{"BF16", "BFloat16"}, {"FP16", "Float16 (half)"}, {"FP32", "Float32 (float)"},
+        {"FP64", "Float64 (double)"}, {"MASK", "Mask"}, {"SI16", "Integer Signed 16 (int16)"},
+        {"SI32", "Integer Signed 32 (int32)"}, {"SI64", "Integer Signed 64 (int64)"},
+        {"SI8", "Integer Signed 8 (int8)"}, {"UI16", "Integer Unsigned 16 (uint16)"},
+        {"UI32", "Integer Unsigned 32 (uint32)"}, {"UI64", "Integer Unsigned 64 (uint64)"},
+        {"UI8", "Integer Unsigned 8 (uint8)"}};
+
     // Loop through each element and get information
     for (auto i = root.firstChild(); !i.isNull(); i = i.nextSibling()) {
         // Check if the child tag name is an 'intrinsic'
@@ -143,6 +168,8 @@ bool DataProvider::create() noexcept
             QString name = node.attribute("name");
             QList<QString> types, cpuids, categories;
             QString description, operation, header, instruction, xed;
+            QString returnParam;
+            QList<QString> parameters;
             if (name.isEmpty()) {
                 qDebug() << "Intrinsic element in xml file did not have name attribute: " + node.toText().data();
                 continue;
@@ -156,8 +183,6 @@ bool DataProvider::create() noexcept
                         if (auto t = childE.firstChild().toText(); !t.isNull()) {
                             types.emplaceBack(t.data());
                         }
-                        // TODO: Intel dont list types anymore so instead detect possible types from intrinsic
-                        // parameters and return value
                     } else if (childE.tagName() == "CPUID") {
                         // Can have multiple cpuid nodes (e.g. different AVX512 sets)
                         if (auto t = childE.firstChild().toText(); !t.isNull()) {
@@ -167,11 +192,70 @@ bool DataProvider::create() noexcept
                         if (auto t = childE.firstChild().toText(); !t.isNull()) {
                             categories.emplaceBack(t.data());
                         }
-                        //} else if (childE.tagName() == "return") {
-                        //    // Has attributes for type, varname, etype
-                        //} else if (childE.tagName() == "parameter") {
-                        //    // Can have multiple parameters
-                        //    // Has same attributes as 'return'
+                    } else if (childE.tagName() == "return") {
+                        // Has attributes for type, varname, etype
+                        returnParam = childE.attribute("type", "");
+                        if (childE.hasAttribute("etype")) {
+                            QString etype = childE.attribute("etype", "");
+                            QString pretty = typesPretty.contains(etype) ? typesPretty[etype] : std::move(etype);
+                            if (pretty == "M128" || pretty == "M256" || pretty == "M512") {
+                                if (returnParam.contains("void")) {
+                                    pretty = "";
+                                } else if (returnParam.contains("__m128i") || returnParam.contains("__m256i") ||
+                                    returnParam.contains("__m512i")) {
+                                    pretty = "Integer (variable)";
+                                } else if (returnParam.contains("__m128") || returnParam.contains("__m256") ||
+                                    returnParam.contains("__m512")) {
+                                    pretty = typesPretty["FP32"];
+                                } else if (returnParam.contains("__m128d") || returnParam.contains("__m256d") ||
+                                    returnParam.contains("__m512d")) {
+                                    pretty = typesPretty["FP64"];
+                                } else if (returnParam.contains("__m128h") || returnParam.contains("__m256h") ||
+                                    returnParam.contains("__m512h")) {
+                                    pretty = typesPretty["FP16"];
+                                } else {
+                                    qDebug() << "Unknown type: " << returnParam;
+                                    pretty = "";
+                                }
+                            }
+                            if (!pretty.isEmpty() && !types.contains(pretty)) {
+                                types.emplaceBack(std::move(pretty));
+                            }
+                        }
+                    } else if (childE.tagName() == "parameter") {
+                        // Can have multiple parameters
+                        // Has same attributes as 'return'
+                        QString typeParam = childE.attribute("type", "");
+                        QString nameParam = childE.attribute("varname", "");
+                        parameters.emplaceBack(typeParam + " " + nameParam);
+                        if (childE.hasAttribute("etype")) {
+                            if (QString etype = childE.attribute("etype", ""); etype != "IMM") {
+                                QString pretty = typesPretty.contains(etype) ? typesPretty[etype] : std::move(etype);
+                                if (pretty == "M128" || pretty == "M256" || pretty == "M512") {
+                                    if (typeParam.contains("void")) {
+                                        pretty = "";
+                                    } else if (typeParam.contains("__m128i") || typeParam.contains("__m256i") ||
+                                        typeParam.contains("__m512i")) {
+                                        pretty = "Integer (variable)";
+                                    } else if (typeParam.contains("__m128") || typeParam.contains("__m256") ||
+                                        typeParam.contains("__m512")) {
+                                        pretty = typesPretty["FP32"];
+                                    } else if (typeParam.contains("__m128d") || typeParam.contains("__m256d") ||
+                                        typeParam.contains("__m512d")) {
+                                        pretty = typesPretty["FP64"];
+                                    } else if (typeParam.contains("__m128h") || typeParam.contains("__m256h") ||
+                                        typeParam.contains("__m512h")) {
+                                        pretty = typesPretty["FP16"];
+                                    } else {
+                                        qDebug() << "Unknown type: " << typeParam;
+                                        pretty = "";
+                                    }
+                                }
+                                if (!pretty.isEmpty() && !types.contains(pretty)) {
+                                    types.emplaceBack(std::move(pretty));
+                                }
+                            }
+                        }
                     } else if (childE.tagName() == "description") {
                         if (auto t = childE.firstChild().toText(); !t.isNull()) {
                             description = t.data();
@@ -184,7 +268,7 @@ bool DataProvider::create() noexcept
                         // Has attributes xed, form, name
                         if (!xed.isEmpty()) {
                             // Can have multiple xeds if intrinsic can map to different instructions
-                            // qDebug() << "Intrinsic has multiple xeds: " + name + ", xed: " + xed;
+                            qDebug() << "Intrinsic has multiple xeds: " + name + ", xed: " + xed;
                         } else {
                             // Always take the first instruction form
                             xed = childE.attribute("xed", "");
@@ -238,8 +322,8 @@ bool DataProvider::create() noexcept
                                     if (auto childE = child.toElement(); !childE.isNull() &&
                                         childE.tagName() == "instruction" && childE.attribute("iform") == xed) {
                                         found = true;
-
-                                        for (auto child2 = child.firstChild(); !child2.isNull();
+                                        bool found2 = false;
+                                        for (auto child2 = child.firstChild(); !child2.isNull() && !found2;
                                              child2 = child2.nextSibling()) {
                                             if (auto child2E = child2.toElement();
                                                 !child2E.isNull() && child2E.tagName() == "architecture") {
@@ -283,10 +367,10 @@ bool DataProvider::create() noexcept
                                                         }
 
                                                         // Add to list
-                                                        // TODO: Use move and forwarding constructor
-                                                        measurements.append(
-                                                            {arch, latency, latencyMemory, throughput, uops, ports});
-                                                        found = true;
+                                                        measurements.emplaceBack(std::move(arch), latency,
+                                                            latencyMemory, throughput, uops, std::move(ports));
+                                                        found2 = true;
+                                                        break;
                                                     }
                                                 }
                                             }
@@ -305,31 +389,44 @@ bool DataProvider::create() noexcept
                     secondLoop = true;
                 }
                 if (!found) {
-                    // qDebug() << "Intrinsic uops data not found: " + name + ", xed: " + xed;
+                    qDebug() << "Intrinsic uops data not found: " + name + ", xed: " + xed;
                 }
             } else {
-                // qDebug() << "Intrinsic element in xml file did not have xed element: " + name;
+                qDebug() << "Intrinsic element in xml file did not have xed element: " + name;
             }
-
-            // Add information to list
-            // TODO: Use move and forwarding constructor
-            data.instructions.append(
-                {name, description, operation, header, tech, types, categories, instruction, measurements});
 
             // Add to list of known techs/types
             if (!data.allTechnologies.contains(tech)) {
-                data.allTechnologies.append(std::move(tech));
+                data.allTechnologies.append(tech);
             }
             for (auto& j : types) {
                 if (!data.allTypes.contains(j)) {
-                    data.allTypes.append(std::move(j));
+                    data.allTypes.append(j);
                 }
             }
             for (auto& j : categories) {
                 if (!data.allCategories.contains(j)) {
-                    data.allCategories.append(std::move(j));
+                    data.allCategories.append(j);
                 }
             }
+
+            // Add information to list
+            QString fullName = returnParam;
+            fullName += ' ';
+            fullName += name;
+            fullName += " (";
+            bool first = false;
+            for (auto& k : parameters) {
+                if (first) {
+                    fullName += ", ";
+                }
+                fullName += k;
+                first = true;
+            }
+            fullName += ')';
+            data.instructions.emplaceBack(std::move(fullName), std::move(name), std::move(description),
+                std::move(operation), std::move(header), std::move(tech), std::move(types), std::move(categories),
+                std::move(instruction), std::move(measurements));
         }
     }
 
@@ -374,7 +471,8 @@ bool DataProvider::create() noexcept
     return true;
 }
 
-bool DataProvider::downloadCache(const QString& fileName, const QString& name, QDomDocument& dataXML, const QUrl& url)
+bool DataProvider::downloadCache(
+    const QString& fileName, const QString& name, QDomDocument& dataXML, const QUrl& url) noexcept
 {
     // Check if cached xml file exists
     if (QFile fileCache(fileName); fileCache.exists() && fileCache.open(QIODevice::ReadOnly)) {

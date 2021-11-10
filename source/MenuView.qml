@@ -52,7 +52,7 @@ Row {
                             }
                         }
                         Label {
-                            text: qsTr("%1").arg(technologyName)
+                            text: technologyName
                             leftPadding: 10
                             topPadding: 0
                             bottomPadding: 0
@@ -93,7 +93,7 @@ Row {
                             bottomPadding: 0
                         }
                         Label {
-                            text: qsTr("%1").arg(typeName)
+                            text: typeName
                             leftPadding: 10
                             topPadding: 0
                             bottomPadding: 0
@@ -134,7 +134,7 @@ Row {
                             bottomPadding: 0
                         }
                         Label {
-                            text: qsTr("%1").arg(categoryName)
+                            text: categoryName
                             leftPadding: 10
                             topPadding: 0
                             bottomPadding: 0

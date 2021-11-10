@@ -17,7 +17,7 @@ ListView {
         contentItem: RowLayout {
             spacing: 0
             Label {
-                text: qsTr("%1").arg(intrinsicName)
+                text: intrinsicFullName
                 leftPadding: 10
                 topPadding: 0
                 bottomPadding: 0

@@ -33,6 +33,16 @@ public:
 
     Measurements& operator=(Measurements&& other) noexcept = default;
 
+    Measurements(QString&& newArch, const uint32_t newLatency, const uint32_t newLatencyMem,
+        const uint32_t newThroughput, const uint32_t newUops, QString newPorts)
+        : arch(std::forward<QString>(newArch))
+        , latency(newLatency)
+        , latencyMem(newLatencyMem)
+        , throughput(newThroughput)
+        , uops(newUops)
+        , ports(std::forward<QString>(newPorts))
+    {}
+
     QString arch;            /**< The processor architecture the measurement is for */
     uint32_t latency = 0;    /**< The measured latency */
     uint32_t latencyMem = 0; /**< The measured maximum latency of memory operations */
@@ -69,7 +79,23 @@ public:
 
     Instruction& operator=(Instruction&& other) noexcept = default;
 
-    QString name;                     /**< The intricics name */
+    Instruction(QString&& newFullName, QString&& newName, QString&& newDescription, QString&& newOperation,
+        QString&& newHeader, QString&& newTechnology, QList<QString>&& newTypes, QList<QString>&& newCategories,
+        QString&& newInstruction, QList<Measurements>&& newMeasurements)
+        : fullName(std::forward<QString>(newFullName))
+        , name(std::forward<QString>(newName))
+        , description(std::forward<QString>(newDescription))
+        , operation(std::forward<QString>(newOperation))
+        , header(std::forward<QString>(newHeader))
+        , technology(std::forward<QString>(newTechnology))
+        , types(std::forward<QStringList>(newTypes))
+        , categories(std::forward<QStringList>(newCategories))
+        , instruction(std::forward<QString>(newInstruction))
+        , measurements(std::forward<QList<Measurements>>(newMeasurements))
+    {}
+
+    QString fullName;                 /**< Intrinsics name combined with return and parameters */
+    QString name;                     /**< The intrinsics name */
     QString description;              /**< The description */
     QString operation;                /**< The pseudo code operation */
     QString header;                   /**< The instructions required include header */
@@ -81,15 +107,15 @@ public:
 
     friend QDataStream& operator<<(QDataStream& out, const Instruction& other)
     {
-        out << other.name << other.description << other.operation << other.header << other.technology << other.types
-            << other.categories << other.instruction << other.measurements;
+        out << other.fullName << other.name << other.description << other.operation << other.header << other.technology
+            << other.types << other.categories << other.instruction << other.measurements;
         return out;
     }
 
     friend QDataStream& operator>>(QDataStream& in, Instruction& other)
     {
-        in >> other.name >> other.description >> other.operation >> other.header >> other.technology >> other.types >>
-            other.categories >> other.instruction >> other.measurements;
+        in >> other.fullName >> other.name >> other.description >> other.operation >> other.header >>
+            other.technology >> other.types >> other.categories >> other.instruction >> other.measurements;
         return in;
     }
 };

@@ -34,8 +34,9 @@ public:
 
     enum IntrinsicRole
     {
-        IntrinsicRoleName = Qt::DisplayRole,
-        IntrinsicRoleDescription = Qt::UserRole,
+        IntrinsicRoleFullName = Qt::DisplayRole,
+        IntrinsicRoleName = Qt::UserRole,
+        IntrinsicRoleDescription,
         IntrinsicRoleOperation,
         IntrinsicRoleHeader,
         IntrinsicRoleTechnology,

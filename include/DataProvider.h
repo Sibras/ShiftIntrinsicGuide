@@ -89,7 +89,7 @@ private:
      * @returns True if it succeeds, false if it fails.
      */
     [[nodiscard]] bool downloadCache(
-        const QString& fileName, const QString& name, QDomDocument& dataXML, const QUrl& url);
+        const QString& fileName, const QString& name, QDomDocument& dataXML, const QUrl& url) noexcept;
 
     InternalData data;             /**< The data */
     float progress = 0.0f;         /**< Stored value indicating total progress of all loading operations */
