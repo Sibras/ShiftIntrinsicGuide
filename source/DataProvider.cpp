@@ -128,19 +128,19 @@ bool DataProvider::create() noexcept
     parentApp->setLoadingTitle("Creating...");
     setProgress(0.0f); // Trigger parent update
 
-    QDomDocument dataXMLIntel, dataXMLUOps;
+    QDomDocument dataXMLIntel, dataXMLOps;
     if (!downloadCache("./intrin.xml", "Intel Intrinsic Guide", dataXMLIntel,
             QUrl("https://www.intel.com/content/dam/develop/public/us/en/include/intrinsics-guide/data-latest.xml"))) {
         return false;
     }
-    if (!downloadCache("./uops.xml", "uops.info", dataXMLUOps, QUrl("https://www.uops.info/instructions.xml"))) {
+    if (!downloadCache("./uops.xml", "uops.info", dataXMLOps, QUrl("https://www.uops.info/instructions.xml"))) {
         return false;
     }
 
     parentApp->setLoadingTitle("Creating data store...");
     // Scan through intrinsic data for each function
     QDomElement root = dataXMLIntel.documentElement();
-    QDomElement root2 = dataXMLUOps.documentElement();
+    QDomElement root2 = dataXMLOps.documentElement();
     data.version = root.attribute("version", "3.6.0");
     data.date = QDate::fromString(root.attribute("date", "06/30/2021"), "MM/dd/YYYY");
 
@@ -273,7 +273,7 @@ bool DataProvider::create() noexcept
                     } else if (childE.tagName() == "instruction") {
                         // Has attributes xed, form, name
                         if (!xed.isEmpty()) {
-                            // Can have multiple xeds if intrinsic can map to different instructions
+                            // Can have multiple xed`s if intrinsic can map to different instructions
 #ifdef _DEBUG
                             qDebug() << "Intrinsic has multiple xeds: " + name + ", xed: " + xed;
 #endif
@@ -310,7 +310,7 @@ bool DataProvider::create() noexcept
                 for (auto& j : cpuids) {
                     cpuid = j; // Generally the last one is fine
                 }
-                // Perform required conversions between intrin and uops arch names
+                // Perform required conversions between intrinsic and uops arch names
                 if (cpuid == "ADX") {
                     cpuid = "ADOX_ADCX";
                 } else if (cpuid == "AVX2") {

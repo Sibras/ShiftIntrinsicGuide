@@ -39,7 +39,7 @@ QVariant TechnologyModel::data(const QModelIndex& index, const int role) const n
                 break;
         }
     }
-    return QVariant();
+    return {};
 }
 
 QHash<int, QByteArray> TechnologyModel::roleNames() const noexcept

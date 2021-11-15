@@ -55,7 +55,7 @@ QVariant IntrinsicModel::data(const QModelIndex& index, const int role) const no
                 break;
         }
     }
-    return QVariant();
+    return {};
 }
 
 QHash<int, QByteArray> IntrinsicModel::roleNames() const noexcept

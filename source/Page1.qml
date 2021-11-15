@@ -14,9 +14,9 @@
  * limitations under the License.
  */
  
-import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
+import QtQuick 6.0
+import QtQuick.Controls 6.0
+import QtQuick.Layouts 6.0
 
 Item {
     id: mainPage
