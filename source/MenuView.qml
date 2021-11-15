@@ -4,19 +4,23 @@ import QtQuick.Layouts 6.0
 import ShiftIntrinsicGuide 1.0
 
 Row {
-    id: menuView
     anchors.fill: parent
-    leftPadding: 6
+    leftPadding: 10
+    rightPadding: 10
+    topPadding: 10
+    bottomPadding: 10
     
     Flickable {
-        width: parent.width
-        height: parent.height
+        id: menuView
+        width: parent.width - parent.leftPadding - parent.rightPadding
+        height: parent.height - parent.topPadding - parent.bottomPadding
         flickableDirection: Flickable.VerticalFlick
         contentHeight: contentItem.childrenRect.height
         boundsBehavior: Flickable.StopAtBounds
         clip: true
 
         Column {
+            spacing: 0
             Label {
                 text: "<h3>Instruction Set</h3>"
                 verticalAlignment: Text.AlignVCenter
@@ -29,7 +33,7 @@ Row {
                 model: technologiesModel
                 delegate: ItemDelegate {
                     id: techDelegate
-                    width: menuView.width - 25
+                    width: menuView.width - leftPadding - rightPadding - 10
                     rightPadding: 6
                     bottomPadding: 0
                     leftPadding: 6
@@ -58,8 +62,7 @@ Row {
                             leftPadding: 5
                             topPadding: 0
                             bottomPadding: 0
-                            Layout.preferredWidth: techDelegate.width - techDelegate.rightPadding - leftPadding
-                            Layout.minimumWidth: Layout.preferredWidth
+                            Layout.fillWidth: true
                             verticalAlignment: Text.AlignVCenter
                         }
 
@@ -78,7 +81,7 @@ Row {
                 model: typesModel
                 delegate: ItemDelegate {
                     id: typeDelegate
-                    width: menuView.width - 25
+                    width: menuView.width - leftPadding - rightPadding - 10
                     rightPadding: 6
                     bottomPadding: 0
                     leftPadding: 6
@@ -100,8 +103,7 @@ Row {
                             leftPadding: 5
                             topPadding: 0
                             bottomPadding: 0
-                            Layout.preferredWidth: typeDelegate.width - typeDelegate.rightPadding - leftPadding
-                            Layout.minimumWidth: Layout.preferredWidth
+                            Layout.fillWidth: true
                             verticalAlignment: Text.AlignVCenter
                         }
 
@@ -120,7 +122,7 @@ Row {
                 model: categoriesModel
                 delegate: ItemDelegate {
                     id: catDelegate
-                    width: menuView.width - 25
+                    width: menuView.width - leftPadding - rightPadding - 10
                     rightPadding: 6
                     bottomPadding: 0
                     leftPadding: 6
@@ -142,8 +144,7 @@ Row {
                             leftPadding: 5
                             topPadding: 0
                             bottomPadding: 0
-                            Layout.preferredWidth: catDelegate.width - catDelegate.rightPadding - leftPadding
-                            Layout.minimumWidth: Layout.preferredWidth
+                            Layout.fillWidth: true
                             verticalAlignment: Text.AlignVCenter
                         }
 

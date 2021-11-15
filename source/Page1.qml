@@ -20,8 +20,8 @@ import QtQuick.Layouts 6.0
 
 Item {
     id: mainPage
-    width: 1920
-    height: 1080
+    width: parent.width
+    height: parent.height
 
     property variant catColours: ["darkgrey", "firebrick", "tomato", "sandybrown", "gold", "greenyellow", 
         "forestgreen", "turquoise", "dodgerblue", "midnightblue", "slateblue", "darkviolet", 
@@ -81,7 +81,7 @@ Item {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.topMargin: 40
+            anchors.topMargin: 17
             anchors.rightMargin: 50
             anchors.leftMargin: 50
             placeholderText: "Search"
@@ -89,7 +89,7 @@ Item {
         }
         Pane {
             anchors.top: parent.top
-            anchors.topMargin: intrinsicSearch.height + 35 + 35
+            anchors.topMargin: intrinsicSearch.height + intrinsicSearch.anchors.topMargin
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
