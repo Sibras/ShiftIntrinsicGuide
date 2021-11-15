@@ -36,13 +36,15 @@ bool IntrinsicProxyModel::filterAcceptsRow(const int sourceRow, const QModelInde
     }
 
     if (!noTechChecked &&
-        !(*allTechnologies)[sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTechnology).toUInt()].checked) {
+        !(*allTechnologies)[static_cast<qsizetype>(
+                                sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTechnology).toUInt())]
+             .checked) {
         return false;
     }
     bool valType = noTypeChecked;
     if (!valType) {
         for (const auto& j : sourceModel()->data(index, IntrinsicModel::IntrinsicRoleTypes).toList()) {
-            valType = (*allTypes)[j.toUInt()].checked;
+            valType = (*allTypes)[static_cast<qsizetype>(j.toUInt())].checked;
             if (valType) {
                 break;
             }
@@ -54,7 +56,7 @@ bool IntrinsicProxyModel::filterAcceptsRow(const int sourceRow, const QModelInde
     bool valCat = noCatsChecked;
     if (!valCat) {
         for (const auto& j : sourceModel()->data(index, IntrinsicModel::IntrinsicRoleCategories).toList()) {
-            valCat = (*allCategories)[j.toUInt()].checked;
+            valCat = (*allCategories)[static_cast<qsizetype>(j.toUInt())].checked;
             if (valCat) {
                 break;
             }
@@ -95,29 +97,30 @@ void IntrinsicProxyModel::load(const QList<StringChecked>& technologies, const Q
 
 void IntrinsicProxyModel::filterUpdated()
 {
+    beginResetModel();
     // Check if any options are checked at all and cache the result for faster searching
     noTechChecked = true;
-    for (auto& i : *allTechnologies) {
+    for (const auto& i : *allTechnologies) {
         if (i.checked) {
             noTechChecked = false;
             break;
         }
     }
     noTypeChecked = true;
-    for (auto& i : *allTypes) {
+    for (const auto& i : *allTypes) {
         if (i.checked) {
             noTypeChecked = false;
             break;
         }
     }
     noCatsChecked = true;
-    for (auto& i : *allCategories) {
+    for (const auto& i : *allCategories) {
         if (i.checked) {
             noCatsChecked = false;
             break;
         }
     }
-    invalidateFilter();
+    endResetModel();
 }
 
 void IntrinsicProxyModel::setFilterExpression(const QString& filter)

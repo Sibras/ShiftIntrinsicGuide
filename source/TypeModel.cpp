@@ -37,7 +37,7 @@ QVariant TypeModel::data(const QModelIndex& index, const int role) const noexcep
                 break;
         }
     }
-    return QVariant();
+    return {};
 }
 
 QHash<int, QByteArray> TypeModel::roleNames() const noexcept
