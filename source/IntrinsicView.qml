@@ -32,7 +32,6 @@ ListView {
                     height: 20
                 }
                 Label {
-                    id: intrinName
                     text: intrinsicFullName
                     leftPadding: 5
                     topPadding: 0
@@ -51,124 +50,134 @@ ListView {
                     Layout.alignment: Qt.AlignRight
                 }
             }
-            ColumnLayout {
+            RowLayout {
                 spacing: 0
                 id: intrinDetails
-                Label {
-                    text: "<h3>Synopsis</h3>"
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignLeft
-                    leftPadding: 20
-                    topPadding: 6
-                    bottomPadding: -15
+                Rectangle {
+                    width: 1
+                    Layout.preferredHeight: parent.height
+                    Layout.minimumHeight: Layout.preferredHeight
+                    color: catColours[intrinsicTechnology]
                 }
-                Row {
+                ColumnLayout {
+                    spacing: 0
                     Label {
-                        id: intrinNameLabel
-                        text: "Intrinsic: "
+                        text: "<h3>Synopsis</h3>"
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignLeft
+                        leftPadding: 20
+                        topPadding: 6
+                        bottomPadding: -15
+                    }
+                    Row {
+                        Label {
+                            id: intrinNameLabel
+                            text: "Intrinsic: "
+                            leftPadding: 30
+                            topPadding: 0
+                            bottomPadding: 0
+                            verticalAlignment: Text.AlignVCenter
+                            font.pointSize: Qt.application.font.pixelSize - 2
+                        }
+                        TextEdit {
+                            text: intrinsicName
+                            topPadding: 0
+                            bottomPadding: 0
+                            verticalAlignment: Text.AlignVCenter
+                            font.pointSize: Qt.application.font.pixelSize - 2
+                            readOnly: true
+                            selectByMouse: true
+                            color: intrinNameLabel.color
+                        }
+                    }
+                    Row {
+                        Label {
+                            text: "Header: <"
+                            leftPadding: 30
+                            topPadding: 0
+                            bottomPadding: 0
+                            verticalAlignment: Text.AlignVCenter
+                            font.pointSize: Qt.application.font.pixelSize - 2
+                        }
+                        TextEdit {
+                            text: intrinsicHeader
+                            topPadding: 0
+                            bottomPadding: 0
+                            verticalAlignment: Text.AlignVCenter
+                            font.pointSize: Qt.application.font.pixelSize - 2
+                            readOnly: true
+                            selectByMouse: true
+                            color: intrinNameLabel.color
+                        }
+                        Label {
+                            text: ">"
+                            topPadding: 0
+                            bottomPadding: 0
+                            verticalAlignment: Text.AlignVCenter
+                            font.pointSize: Qt.application.font.pixelSize - 2
+                        }
+                    }
+                    Label {
+                        text: "CPUIDs: " + intrinsicCPUIDText
                         leftPadding: 30
+                        topPadding: 0
+                        bottomPadding: 0
+                        verticalAlignment: Text.AlignVCenter
+                        font.pointSize: Qt.application.font.pixelSize - 2
+                        visible: intrinsicCPUIDText.length !== 0
+                    }
+                    Label {
+                        text: "Types: " + intrinsicTypesText
+                        leftPadding: 30
+                        topPadding: 0
+                        bottomPadding: 0
                         verticalAlignment: Text.AlignVCenter
                         font.pointSize: Qt.application.font.pixelSize - 2
                     }
-                    TextEdit {
-                        text: intrinsicName
+                    Label {
+                        text: "Categories: " + intrinsicCategoriesText
+                        leftPadding: 30
+                        topPadding: 0
+                        bottomPadding: 0
+                        verticalAlignment: Text.AlignVCenter
+                        font.pointSize: Qt.application.font.pixelSize - 2
+                    }
+                    Label {
+                        text: "<h3>Description</h3>"
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: 20
+                        topPadding: 6
+                        bottomPadding: -15
+                    }
+                    Label {
+                        text: intrinsicDescription
+                        leftPadding: 30
+                        topPadding: 0
+                        bottomPadding: 0
                         verticalAlignment: Text.AlignVCenter
                         Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
                         font.pointSize: Qt.application.font.pixelSize - 2
-                        readOnly: true
-                        selectByMouse: true
-                        color: intrinNameLabel.color
                     }
-                }
-                Row {
                     Label {
-                        text: "Header: <"
+                        text: "<h3>Operation</h3>"
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: 20
+                        topPadding: 6
+                        bottomPadding: -15
+                        visible: intrinsicOperation.length !== 0
+                    }
+                    Label {
+                        text: intrinsicOperation
                         leftPadding: 30
+                        topPadding: 0
+                        bottomPadding: 0
                         verticalAlignment: Text.AlignVCenter
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
                         font.pointSize: Qt.application.font.pixelSize - 2
+                        visible: intrinsicOperation.length !== 0
                     }
-                    TextEdit {
-                        text: intrinsicHeader
-                        verticalAlignment: Text.AlignVCenter
-                        font.pointSize: Qt.application.font.pixelSize - 2
-                        readOnly: true
-                        selectByMouse: true
-                        color: intrinNameLabel.color
-                    }
-                    Label {
-                        text: ">"
-                        verticalAlignment: Text.AlignVCenter
-                        font.pointSize: Qt.application.font.pixelSize - 2
-                    }
-                }
-                Label {
-                    text: "CPUIDs: " + intrinsicCPUIDText
-                    leftPadding: 30
-                    topPadding: 0
-                    bottomPadding: 0
-                    verticalAlignment: Text.AlignVCenter
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
-                    font.pointSize: Qt.application.font.pixelSize - 2
-                    visible: intrinsicCPUIDText.length !== 0
-                }
-                Label {
-                    text: "Types: " + intrinsicTypesText
-                    leftPadding: 30
-                    topPadding: 0
-                    bottomPadding: 0
-                    verticalAlignment: Text.AlignVCenter
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
-                    font.pointSize: Qt.application.font.pixelSize - 2
-                }
-                Label {
-                    text: "Categories: " + intrinsicCategoriesText
-                    leftPadding: 30
-                    topPadding: 0
-                    bottomPadding: 0
-                    verticalAlignment: Text.AlignVCenter
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
-                    font.pointSize: Qt.application.font.pixelSize - 2
-                }
-                Label {
-                    text: "<h3>Description</h3>"
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignLeft
-                    leftPadding: 20
-                    topPadding: 6
-                    bottomPadding: -15
-                }
-                Label {
-                    text: intrinsicDescription
-                    leftPadding: 30
-                    topPadding: 0
-                    bottomPadding: 0
-                    verticalAlignment: Text.AlignVCenter
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
-                    font.pointSize: Qt.application.font.pixelSize - 2
-                }
-                Label {
-                    text: "<h3>Operation</h3>"
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignLeft
-                    leftPadding: 20
-                    topPadding: 6
-                    bottomPadding: -15
-                    visible: intrinsicOperation.length !== 0
-                }
-                Label {
-                    text: intrinsicOperation
-                    leftPadding: 30
-                    topPadding: 0
-                    bottomPadding: 0
-                    verticalAlignment: Text.AlignVCenter
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
-                    font.pointSize: Qt.application.font.pixelSize - 2
-                    visible: intrinsicOperation.length !== 0
                 }
             }
         }
