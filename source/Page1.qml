@@ -23,9 +23,9 @@ Item {
     width: 1920
     height: 1080
 
-    property variant catColours: ["lemonchiffon", "honeydew", "palegreen", "darkseagreen", "paleturquoise", "mediumaquamarine", 
-        "cadetblue", "steelblue", "mediumslateblue", "palevioletred", "indianred", "darksalmon", "sienna", 
-        "burlywood", "sandybrown", "goldenrod", "white", "white", "white", "white"]
+    property variant catColours: ["darkgrey", "firebrick", "tomato", "sandybrown", "gold", "greenyellow", 
+        "forestgreen", "turquoise", "dodgerblue", "midnightblue", "slateblue", "darkviolet", 
+        "mediumvioletred", "saddlebrown", "darkorange", "red", "white", "white", "white"]
 
     Pane {
         anchors.centerIn: parent
