@@ -80,13 +80,17 @@ public:
     Instruction& operator=(Instruction&& other) noexcept = default;
 
     Instruction(QString&& newFullName, QString&& newName, QString&& newDescription, QString&& newOperation,
-        QString&& newHeader, QString&& newTechnology, QList<QString>&& newTypes, QList<QString>&& newCategories,
-        QString&& newInstruction, QList<Measurements>&& newMeasurements)
+        QString&& newHeader, QString&& newCpuidText, QString&& newTypeText, QString&& newCategoryText,
+        QString&& newTechnology, QList<QString>&& newTypes, QList<QString>&& newCategories, QString&& newInstruction,
+        QList<Measurements>&& newMeasurements)
         : fullName(std::forward<QString>(newFullName))
         , name(std::forward<QString>(newName))
         , description(std::forward<QString>(newDescription))
         , operation(std::forward<QString>(newOperation))
         , header(std::forward<QString>(newHeader))
+        , cpuidText(std::forward<QString>(newCpuidText))
+        , typeText(std::forward<QString>(newTypeText))
+        , categoryText(std::forward<QString>(newCategoryText))
         , technology(std::forward<QString>(newTechnology))
         , types(std::forward<QStringList>(newTypes))
         , categories(std::forward<QStringList>(newCategories))
@@ -98,7 +102,10 @@ public:
     QString name;                     /**< The intrinsics name */
     QString description;              /**< The description */
     QString operation;                /**< The pseudo code operation */
-    QString header;                   /**< The instructions required include header */
+    QString header;                   /**< The required include header */
+    QString cpuidText;                /**< The required CPUID`s as user readable text */
+    QString typeText;                 /**< The required types as user readable text */
+    QString categoryText;             /**< The categories of operation as user readable text */
     QString technology;               /**< The required technology (e.g. AVX etc.) */
     QList<QString> types;             /**< The types of data the intrinsic operates on (e.g. Integer/Float etc.) */
     QList<QString> categories;        /**< The category of operation (e.g. Arithmetic etc.) */
@@ -120,13 +127,17 @@ public:
     InstructionIndexed& operator=(InstructionIndexed&& other) noexcept = default;
 
     InstructionIndexed(QString&& newFullName, QString&& newName, QString&& newDescription, QString&& newOperation,
-        QString&& newHeader, const uint32_t newTechnology, QList<uint32_t>&& newTypes, QList<uint32_t>&& newCategories,
+        QString&& newHeader, QString&& newCpuidText, QString&& newTypeText, QString&& newCategoryText,
+        const uint32_t newTechnology, QList<uint32_t>&& newTypes, QList<uint32_t>&& newCategories,
         QString&& newInstruction, QList<Measurements>&& newMeasurements)
         : fullName(std::forward<QString>(newFullName))
         , name(std::forward<QString>(newName))
         , description(std::forward<QString>(newDescription))
         , operation(std::forward<QString>(newOperation))
         , header(std::forward<QString>(newHeader))
+        , cpuidText(std::forward<QString>(newCpuidText))
+        , typeText(std::forward<QString>(newTypeText))
+        , categoryText(std::forward<QString>(newCategoryText))
         , technology(newTechnology)
         , types(std::forward<QList<uint32_t>>(newTypes))
         , categories(std::forward<QList<uint32_t>>(newCategories))
@@ -139,6 +150,9 @@ public:
     QString description;        /**< The description */
     QString operation;          /**< The pseudo code operation */
     QString header;             /**< The instructions required include header */
+    QString cpuidText;          /**< The required CPUID`s as user readable text */
+    QString typeText;           /**< The required types as user readable text */
+    QString categoryText;       /**< The categories of operation as user readable text */
     uint32_t technology = 0;    /**< The required technology (e.g. AVX etc.). Indexes into allTechnologies */
     QList<uint32_t> types;      /**< The data types operated on (e.g. Integer/Float etc.). Indexes into allTypes */
     QList<uint32_t> categories; /**< The category of operation (e.g. Arithmetic etc.). Indexes into allCategories */
@@ -147,15 +161,17 @@ public:
 
     friend QDataStream& operator<<(QDataStream& out, const InstructionIndexed& other)
     {
-        out << other.fullName << other.name << other.description << other.operation << other.header << other.technology
-            << other.types << other.categories << other.instruction << other.measurements;
+        out << other.fullName << other.name << other.description << other.operation << other.header << other.cpuidText
+            << other.typeText << other.categoryText << other.technology << other.types << other.categories
+            << other.instruction << other.measurements;
         return out;
     }
 
     friend QDataStream& operator>>(QDataStream& in, InstructionIndexed& other)
     {
-        in >> other.fullName >> other.name >> other.description >> other.operation >> other.header >>
-            other.technology >> other.types >> other.categories >> other.instruction >> other.measurements;
+        in >> other.fullName >> other.name >> other.description >> other.operation >> other.header >> other.cpuidText >>
+            other.typeText >> other.categoryText >> other.technology >> other.types >> other.categories >>
+            other.instruction >> other.measurements;
         return in;
     }
 

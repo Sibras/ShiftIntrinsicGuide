@@ -19,7 +19,7 @@
 #include "Application.h"
 #include "Downloader.h"
 
-constexpr uint32_t fileVersion = 0x010400;
+constexpr uint32_t fileVersion = 0x010600;
 constexpr uint32_t fileChecksum = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
@@ -454,10 +454,31 @@ bool DataProvider::create() noexcept
             parNameStyled += "</font>";
             description.replace('"' + returnName + '"', parNameStyled);
 
+            // Create print friendly text
+            QString cpuidText, typesText, catText;
+            for (auto& j : cpuids) {
+                if (!cpuidText.isEmpty()) {
+                    cpuidText += ", ";
+                }
+                cpuidText += j;
+            }
+            for (auto& j : types) {
+                if (!typesText.isEmpty()) {
+                    typesText += ", ";
+                }
+                typesText += j;
+            }
+            for (auto& j : categories) {
+                if (!catText.isEmpty()) {
+                    catText += ", ";
+                }
+                catText += j;
+            }
+
             // Add information to list
             instructions.emplaceBack(std::move(fullName), std::move(name), std::move(description), std::move(operation),
-                std::move(header), std::move(tech), std::move(types), std::move(categories), std::move(instruction),
-                std::move(measurements));
+                std::move(header), std::move(cpuidText), std::move(typesText), std::move(catText), std::move(tech),
+                std::move(types), std::move(categories), std::move(instruction), std::move(measurements));
 
             // Check if shutdown has been called
             if (parentApp->getLoaded()) {
@@ -510,8 +531,9 @@ bool DataProvider::create() noexcept
             categories.emplaceBack(static_cast<uint32_t>(data.allCategories.indexOf(j)));
         }
         data.instructions.emplaceBack(std::move(i.fullName), std::move(i.name), std::move(i.description),
-            std::move(i.operation), std::move(i.header), tech, std::move(types), std::move(categories),
-            std::move(i.instruction), std::move(i.measurements));
+            std::move(i.operation), std::move(i.header), std::move(i.cpuidText), std::move(i.typeText),
+            std::move(i.categoryText), tech, std::move(types), std::move(categories), std::move(i.instruction),
+            std::move(i.measurements));
     }
 
     std::sort(data.instructions.begin(), data.instructions.end());

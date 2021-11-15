@@ -83,6 +83,37 @@ ListView {
                     font.pointSize: Qt.application.font.pixelSize - 2
                 }
                 Label {
+                    text: "CPUIDs: " + intrinsicCPUIDText
+                    leftPadding: 30
+                    topPadding: 0
+                    bottomPadding: 0
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    font.pointSize: Qt.application.font.pixelSize - 2
+                    visible: intrinsicCPUIDText.length !== 0
+                }
+                Label {
+                    text: "Types: " + intrinsicTypesText
+                    leftPadding: 30
+                    topPadding: 0
+                    bottomPadding: 0
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    font.pointSize: Qt.application.font.pixelSize - 2
+                }
+                Label {
+                    text: "Categories: " + intrinsicCategoriesText
+                    leftPadding: 30
+                    topPadding: 0
+                    bottomPadding: 0
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    font.pointSize: Qt.application.font.pixelSize - 2
+                }
+                Label {
                     text: "<h3>Description</h3>"
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignLeft
