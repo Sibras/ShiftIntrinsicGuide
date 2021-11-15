@@ -10,16 +10,14 @@ ListView {
     clip: true
 
     delegate: ItemDelegate {
-        id: rootDelegate
         width: intrinsicView.width - 25
         rightPadding: 6
         bottomPadding: 6
         leftPadding: 6
         topPadding: 6
-        onClicked: rootDelegate.state == 'collapsed' ? rootDelegate.state = "" : rootDelegate.state = 'collapsed';
+        onClicked: state == 'collapsed' ? state = "" : state = 'collapsed';
         contentItem: ColumnLayout {
             spacing: 0
-            id: intrinShort
             Rectangle {
                 height: 1
                 Layout.preferredWidth: parent.width
@@ -29,7 +27,6 @@ ListView {
             RowLayout {
                 spacing: 0
                 Rectangle {
-                    id: colourRect
                     color: catColours[intrinsicTechnology]
                     width: 15
                     height: 20
@@ -44,28 +41,84 @@ ListView {
                     Layout.fillWidth: true
                 }
                 Label {
-                    id: intrinInstruction
                     text: intrinsicInstruction
                     rightPadding: 5
                     topPadding: 0
                     bottomPadding: 0
+                    font.pointSize: Qt.application.font.pixelSize - 2
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignRight
                     Layout.alignment: Qt.AlignRight
                 }
             }
-            RowLayout {
+            ColumnLayout {
                 spacing: 0
                 id: intrinDetails
                 Label {
-                    id: intrinDescription
-                    text: intrinsicDescription
-                    leftPadding: 5
+                    text: "<h3>Synopsis</h3>"
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignLeft
+                    leftPadding: 20
+                    topPadding: 6
+                    bottomPadding: -15
+                }
+                Label {
+                    text: "Intrinsic: " + intrinsicName
+                    leftPadding: 30
                     topPadding: 0
                     bottomPadding: 0
                     verticalAlignment: Text.AlignVCenter
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
+                    font.pointSize: Qt.application.font.pixelSize - 2
+                }
+                Label {
+                    text: "Header: <" + intrinsicHeader + ">"
+                    leftPadding: 30
+                    topPadding: 0
+                    bottomPadding: 0
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    font.pointSize: Qt.application.font.pixelSize - 2
+                }
+                Label {
+                    text: "<h3>Description</h3>"
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignLeft
+                    leftPadding: 20
+                    topPadding: 6
+                    bottomPadding: -15
+                }
+                Label {
+                    text: intrinsicDescription
+                    leftPadding: 30
+                    topPadding: 0
+                    bottomPadding: 0
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    font.pointSize: Qt.application.font.pixelSize - 2
+                }
+                Label {
+                    text: "<h3>Operation</h3>"
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignLeft
+                    leftPadding: 20
+                    topPadding: 6
+                    bottomPadding: -15
+                    visible: intrinsicOperation.length !== 0
+                }
+                Label {
+                    text: intrinsicOperation
+                    leftPadding: 30
+                    topPadding: 0
+                    bottomPadding: 0
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    font.pointSize: Qt.application.font.pixelSize - 2
+                    visible: intrinsicOperation.length !== 0
                 }
             }
         }

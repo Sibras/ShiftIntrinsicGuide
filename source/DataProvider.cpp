@@ -19,7 +19,7 @@
 #include "Application.h"
 #include "Downloader.h"
 
-constexpr uint32_t fileVersion = 0x010200;
+constexpr uint32_t fileVersion = 0x010400;
 constexpr uint32_t fileChecksum = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
@@ -168,7 +168,7 @@ bool DataProvider::create() noexcept
             QString name = node.attribute("name");
             QList<QString> types, cpuids, categories;
             QString description, operation, header, instruction, xed;
-            QString returnParam;
+            QString returnParam, returnName;
             QList<QPair<QString, QString>> parameters;
             if (name.isEmpty()) {
 #ifdef _DEBUG
@@ -197,6 +197,7 @@ bool DataProvider::create() noexcept
                     } else if (childE.tagName() == "return") {
                         // Has attributes for type, varname, etype
                         returnParam = childE.attribute("type", "");
+                        returnName = childE.attribute("varname", "");
                         if (childE.hasAttribute("etype")) {
                             QString etype = childE.attribute("etype", "");
                             QString pretty = typesPretty.contains(etype) ? typesPretty[etype] : std::move(etype);
@@ -268,7 +269,7 @@ bool DataProvider::create() noexcept
                         }
                     } else if (childE.tagName() == "operation") {
                         if (auto t = childE.firstChild().toText(); !t.isNull()) {
-                            operation = t.data();
+                            operation = t.data().trimmed();
                         }
                     } else if (childE.tagName() == "instruction") {
                         // Has attributes xed, form, name
@@ -446,6 +447,12 @@ bool DataProvider::create() noexcept
                 description.replace('"' + parName + '"', parNameStyled);
             }
             fullName += ')';
+
+            // Also update descriptions return variable
+            QString parNameStyled = "<font color=\"lightseagreen\">";
+            parNameStyled += returnName;
+            parNameStyled += "</font>";
+            description.replace('"' + returnName + '"', parNameStyled);
 
             // Add information to list
             instructions.emplaceBack(std::move(fullName), std::move(name), std::move(description), std::move(operation),

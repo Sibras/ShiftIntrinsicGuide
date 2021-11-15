@@ -18,26 +18,27 @@ Row {
 
         Column {
             Label {
-                id: technologylabel
-                text: "Instruction Set"
+                text: "<h3>Instruction Set</h3>"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
-                font.pointSize: 16
                 topPadding: 6
-                bottomPadding: 6
+                bottomPadding: -15
             }
 
             Repeater {
                 model: technologiesModel
                 delegate: ItemDelegate {
+                    id: techDelegate
                     width: menuView.width - 25
                     rightPadding: 6
                     bottomPadding: 0
                     leftPadding: 6
                     topPadding: 0
+                    onClicked: { techCheck.toggle(); techCheck.toggled() }
                     contentItem: RowLayout {
                         spacing: 0
                         CheckBox {
+                            id: techCheck
                             checkable: true
                             checked: technologyChecked
                             onToggled: technologiesModel.setData(technologiesModel.index(index, 0), checked, TechnologyModel.TechnologyRoleChecked)
@@ -46,15 +47,18 @@ Row {
                             bottomPadding: 0
                             background: Rectangle {
                                 color: catColours[index]
-                                radius: 25
+                                width: parent.height * 1.3
+                                height: parent.height * 1.3
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.horizontalCenter: parent.horizontalCenter
                             }
                         }
                         Label {
                             text: technologyName
-                            leftPadding: 10
+                            leftPadding: 5
                             topPadding: 0
                             bottomPadding: 0
-                            Layout.preferredWidth: menuView.width - 25 - 10 - 6
+                            Layout.preferredWidth: techDelegate.width - techDelegate.rightPadding - leftPadding
                             Layout.minimumWidth: Layout.preferredWidth
                             verticalAlignment: Text.AlignVCenter
                         }
@@ -64,25 +68,26 @@ Row {
             }
 
             Label {
-                id: typelabel
-                text: "Type"
+                text: "<h3>Type</h3>"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
-                font.pointSize: 16
                 topPadding: 10
-                bottomPadding: 6
+                bottomPadding: -15
             }
             Repeater {
                 model: typesModel
                 delegate: ItemDelegate {
+                    id: typeDelegate
                     width: menuView.width - 25
                     rightPadding: 6
                     bottomPadding: 0
                     leftPadding: 6
                     topPadding: 0
+                    onClicked: { typeCheck.toggle(); typeCheck.toggled() }
                     contentItem: RowLayout {
                         spacing: 0
                         CheckBox {
+                            id: typeCheck
                             checkable: true
                             checked: typeChecked
                             onToggled: typesModel.setData(typesModel.index(index, 0), checked, TypeModel.TypeRoleChecked)
@@ -92,10 +97,10 @@ Row {
                         }
                         Label {
                             text: typeName
-                            leftPadding: 10
+                            leftPadding: 5
                             topPadding: 0
                             bottomPadding: 0
-                            Layout.preferredWidth: menuView.width - 25 - 10 - 6
+                            Layout.preferredWidth: typeDelegate.width - typeDelegate.rightPadding - leftPadding
                             Layout.minimumWidth: Layout.preferredWidth
                             verticalAlignment: Text.AlignVCenter
                         }
@@ -105,25 +110,26 @@ Row {
             }
 
             Label {
-                id: categorylabel
-                text: "Category"
+                text: "<h3>Category</h3>"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
-                font.pointSize: 16
                 topPadding: 10
-                bottomPadding: 6
+                bottomPadding: -15
             }
             Repeater {
                 model: categoriesModel
                 delegate: ItemDelegate {
+                    id: catDelegate
                     width: menuView.width - 25
                     rightPadding: 6
                     bottomPadding: 0
                     leftPadding: 6
                     topPadding: 0
+                    onClicked: { catCheck.toggle(); catCheck.toggled() }
                     contentItem: RowLayout {
                         spacing: 0
                         CheckBox {
+                            id: catCheck
                             checkable: true
                             checked: categoryChecked
                             onToggled: categoriesModel.setData(categoriesModel.index(index, 0), checked, CategoryModel.CategoryRoleChecked)
@@ -133,10 +139,10 @@ Row {
                         }
                         Label {
                             text: categoryName
-                            leftPadding: 10
+                            leftPadding: 5
                             topPadding: 0
                             bottomPadding: 0
-                            Layout.preferredWidth: menuView.width - 25 - 10 - 6
+                            Layout.preferredWidth: catDelegate.width - catDelegate.rightPadding - leftPadding
                             Layout.minimumWidth: Layout.preferredWidth
                             verticalAlignment: Text.AlignVCenter
                         }
