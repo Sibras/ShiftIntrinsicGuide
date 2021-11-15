@@ -62,25 +62,44 @@ ListView {
                     topPadding: 6
                     bottomPadding: -15
                 }
-                Label {
-                    text: "Intrinsic: " + intrinsicName
-                    leftPadding: 30
-                    topPadding: 0
-                    bottomPadding: 0
-                    verticalAlignment: Text.AlignVCenter
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
-                    font.pointSize: Qt.application.font.pixelSize - 2
+                Row {
+                    Label {
+                        id: intrinNameLabel
+                        text: "Intrinsic: "
+                        leftPadding: 30
+                        verticalAlignment: Text.AlignVCenter
+                        font.pointSize: Qt.application.font.pixelSize - 2
+                    }
+                    TextEdit {
+                        text: intrinsicName
+                        verticalAlignment: Text.AlignVCenter
+                        Layout.fillWidth: true
+                        font.pointSize: Qt.application.font.pixelSize - 2
+                        readOnly: true
+                        selectByMouse: true
+                        color: intrinNameLabel.color
+                    }
                 }
-                Label {
-                    text: "Header: <" + intrinsicHeader + ">"
-                    leftPadding: 30
-                    topPadding: 0
-                    bottomPadding: 0
-                    verticalAlignment: Text.AlignVCenter
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
-                    font.pointSize: Qt.application.font.pixelSize - 2
+                Row {
+                    Label {
+                        text: "Header: <"
+                        leftPadding: 30
+                        verticalAlignment: Text.AlignVCenter
+                        font.pointSize: Qt.application.font.pixelSize - 2
+                    }
+                    TextEdit {
+                        text: intrinsicHeader
+                        verticalAlignment: Text.AlignVCenter
+                        font.pointSize: Qt.application.font.pixelSize - 2
+                        readOnly: true
+                        selectByMouse: true
+                        color: intrinNameLabel.color
+                    }
+                    Label {
+                        text: ">"
+                        verticalAlignment: Text.AlignVCenter
+                        font.pointSize: Qt.application.font.pixelSize - 2
+                    }
                 }
                 Label {
                     text: "CPUIDs: " + intrinsicCPUIDText
