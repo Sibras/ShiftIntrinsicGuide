@@ -35,7 +35,8 @@ BraceWrapping:
   AfterExternBlock: false
   BeforeCatch: false
   BeforeElse: false
-  #BeforeLambdaBody: false
+  BeforeLambdaBody: false
+  BeforeWhile: false
   IndentBraces: false
   SplitEmptyFunction: false
   SplitEmptyRecord: false
@@ -65,7 +66,7 @@ IncludeCategories:
   - Regex:           '^<'
     Priority:        2
 IncludeIsMainSourceRegex: '(.inl)$'
-#IndentCaseBlocks: false
+IndentCaseBlocks: false
 IndentCaseLabels: true
 IndentGotoLabels: false
 IndentPPDirectives: AfterHash
