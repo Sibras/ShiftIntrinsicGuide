@@ -51,25 +51,25 @@ public:
     /**
      * Get the number of rows in the model.
      * @note Used Automatically by Qt to get number of items in the list.
-     * @param parameter1 The first parameter.
+     * @param parameter1 (Optional) The first parameter.
      * @return The number of rows.
      */
-    [[nodiscard]] int rowCount(const QModelIndex& parameter1) const noexcept override;
+    [[nodiscard]] int rowCount(const QModelIndex& parameter1 = QModelIndex()) const noexcept override;
 
     /**
      * Get the number of columns in the model.
      * @note Used Automatically by Qt to get number of values for each item.
-     * @param parameter1 The first parameter.
+     * @param parameter1 (Optional) The first parameter.
      * @return The number of columns.
      */
-    [[nodiscard]] int columnCount(const QModelIndex& parameter1) const noexcept override;
+    [[nodiscard]] int columnCount(const QModelIndex& parameter1 = QModelIndex()) const noexcept override;
 
     /**
      * Get the header information for the table.
      * @note Used Automatically by Qt to get column names for the table.
      * @param section     This is ignored.
      * @param orientation Whether displayed horizontal or vertical.
-     * @param role        The data element to retrieve.
+     * @param role        (Optional) The data element to retrieve.
      * @return The number of columns.
      */
     [[nodiscard]] Q_INVOKABLE QVariant headerData(
@@ -79,7 +79,7 @@ public:
      * Get data for specific value from a list element.
      * @note Used Automatically by Qt to get the value of a data element.
      * @param index Zero-based index of the list item in the model.
-     * @param role  The data element to retrieve.
+     * @param role  (Optional) The data element to retrieve.
      * @return A QVariant.
      */
     [[nodiscard]] QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const noexcept override;
