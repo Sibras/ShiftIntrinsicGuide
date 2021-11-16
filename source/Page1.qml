@@ -84,6 +84,7 @@ Item {
             anchors.topMargin: 17
             anchors.rightMargin: 50
             anchors.leftMargin: 50
+            selectByMouse: true
             placeholderText: "Search"
             onEditingFinished: intrinsicProxyModel.setFilterExpression(text)
         }
