@@ -33,8 +33,8 @@ public:
 
     Measurements& operator=(Measurements&& other) noexcept = default;
 
-    Measurements(QString&& newArch, const uint32_t newLatency, const uint32_t newLatencyMem,
-        const uint32_t newThroughput, const uint32_t newUops, QString newPorts)
+    Measurements(QString&& newArch, const uint32_t newLatency, const uint32_t newLatencyMem, const float newThroughput,
+        const uint32_t newUops, QString newPorts)
         : arch(std::forward<QString>(newArch))
         , latency(newLatency)
         , latencyMem(newLatencyMem)
@@ -46,7 +46,7 @@ public:
     QString arch;            /**< The processor architecture the measurement is for */
     uint32_t latency = 0;    /**< The measured latency */
     uint32_t latencyMem = 0; /**< The measured maximum latency of memory operations */
-    uint32_t throughput = 0; /**< The measured throughput */
+    float throughput = 0;    /**< The measured throughput */
     uint32_t uops = 0;       /**< The instruction uops */
     QString ports;           /**< The instruction ports */
 

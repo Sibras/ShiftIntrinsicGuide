@@ -19,7 +19,7 @@
 #include "Application.h"
 #include "Downloader.h"
 
-constexpr uint32_t fileVersion = 0x010600;
+constexpr uint32_t fileVersion = 0x010700;
 constexpr uint32_t fileChecksum = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
@@ -74,13 +74,13 @@ void DataProvider::clear()
 
 bool DataProvider::load() noexcept
 {
-    // Reset UI values to default
-    progressModifier = 1.0f;
-    progress = 0.0f;
-    parentApp->setLoadingTitle("Loading...");
-    setProgress(0.0f); // Trigger parent update
-
     if (QFile fileCache("./dataCache"); fileCache.exists() && fileCache.open(QIODevice::ReadOnly)) {
+        // Reset UI values to default
+        progressModifier = 1.0f;
+        progress = 0.0f;
+        parentApp->setLoadingTitle("Loading...");
+        setProgress(0.0f); // Trigger parent update
+
         // Load data from cache
         parentApp->setLoadingTitle("Loading data from cache...");
         QDataStream in(&fileCache);
@@ -331,8 +331,7 @@ bool DataProvider::create() noexcept
                                     if (auto childE = child.toElement(); !childE.isNull() &&
                                         childE.tagName() == "instruction" && childE.attribute("iform") == xed) {
                                         found = true;
-                                        bool found2 = false;
-                                        for (auto child2 = child.firstChild(); !child2.isNull() && !found2;
+                                        for (auto child2 = child.firstChild(); !child2.isNull();
                                              child2 = child2.nextSibling()) {
                                             if (auto child2E = child2.toElement();
                                                 !child2E.isNull() && child2E.tagName() == "architecture") {
@@ -345,46 +344,54 @@ bool DataProvider::create() noexcept
                                                         uint32_t uops = child3E.attribute("uops").toUInt();
                                                         QString ports = child3E.attribute("ports");
 
-                                                        uint32_t throughput = (child3E.hasAttribute("TP")) ?
-                                                            child3E.attribute("TP").toUInt() :
-                                                            child3E.attribute("TP_unrolled").toUInt();
+                                                        float throughput = (child3E.hasAttribute("TP")) ?
+                                                            child3E.attribute("TP").toFloat() :
+                                                            child3E.attribute("TP_unrolled").toFloat();
 
                                                         // Calculate latency
-                                                        uint32_t latency = 0;
-                                                        uint32_t latencyMemory = 0; // Additional latency associated
-                                                                                    // with using a memory address
+                                                        uint32_t latency = UINT_MAX;
+                                                        uint32_t latencyTrue = UINT_MAX;
+                                                        uint32_t latencyMemory =
+                                                            UINT_MAX; // Additional latency associated
+                                                                      // with using a memory address
                                                         for (auto child4 = child3.firstChild(); !child4.isNull();
                                                              child4 = child4.nextSibling()) {
                                                             if (auto child4E = child4.toElement();
                                                                 !child4E.isNull() && child4E.tagName() == "latency") {
-                                                                for (auto attr = 0;
-                                                                     attr < child4E.attributes().length(); ++attr) {
-                                                                    if (auto attrE =
-                                                                            child4E.attributes().item(attr).toElement();
-                                                                        !attrE.isNull() &&
-                                                                        attrE.tagName().startsWith("cycles")) {
-                                                                        if (attrE.tagName() == "cycles") {
-                                                                            latency = std::max(
-                                                                                latency, attrE.tagName().toUInt());
-                                                                        } else {
-                                                                            latencyMemory = std::max(latencyMemory,
-                                                                                attrE.tagName().toUInt());
-                                                                        }
+                                                                if (child4E.hasAttribute("cycles")) {
+                                                                    if (child4E.attribute("target_op").toUInt() == 1 &&
+                                                                        child4E.attribute("start_op").toUInt() == 1) {
+                                                                        latencyTrue =
+                                                                            child4E.attribute("cycles").toUInt();
+                                                                    } else {
+                                                                        latency =
+                                                                            std::max(latency == UINT_MAX ? 0 : latency,
+                                                                                child4E.attribute("cycles").toUInt());
                                                                     }
+                                                                } else if (child4E.hasAttribute("cycles_mem")) {
+                                                                    latencyMemory = std::max(
+                                                                        latencyMemory == UINT_MAX ? 0 : latencyMemory,
+                                                                        child4E.attribute("cycles_mem").toUInt());
+                                                                    latencyMemory = std::max(latencyMemory,
+                                                                        child4E.attribute("cycles_addr").toUInt());
                                                                 }
                                                             }
+                                                        }
+
+                                                        // Fix latency for cases when different operand ordering
+                                                        // resulted in different results
+                                                        if (latencyTrue != UINT_MAX) {
+                                                            latency = latencyTrue;
                                                         }
 
                                                         // Add to list
                                                         measurements.emplaceBack(std::move(arch), latency,
                                                             latencyMemory, throughput, uops, std::move(ports));
-                                                        found2 = true;
                                                         break;
                                                     }
                                                 }
                                             }
                                         }
-
                                         break;
                                     }
                                 }
