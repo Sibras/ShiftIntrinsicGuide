@@ -8,6 +8,7 @@ ListView {
     boundsBehavior: Flickable.StopAtBounds
     model: intrinsicProxyModel
     clip: true
+    maximumFlickVelocity: 1000
 
     delegate: ItemDelegate {
         width: intrinsicView.width - 25
