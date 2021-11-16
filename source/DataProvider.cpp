@@ -19,7 +19,7 @@
 #include "Application.h"
 #include "Downloader.h"
 
-constexpr uint32_t fileVersion = 0x010800;
+constexpr uint32_t fileVersion = 0x010801;
 constexpr uint32_t fileChecksum = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
@@ -367,7 +367,8 @@ bool DataProvider::create() noexcept
                                                                 !child4E.isNull() && child4E.tagName() == "latency") {
                                                                 if (child4E.hasAttribute("cycles")) {
                                                                     if (child4E.attribute("target_op").toUInt() == 1 &&
-                                                                        child4E.attribute("start_op").toUInt() == 1) {
+                                                                        child4E.attribute("start_op").toUInt() == 1 &&
+                                                                        child4E.attribute("cycles").toUInt() > 0) {
                                                                         latencyTrue =
                                                                             child4E.attribute("cycles").toUInt();
                                                                     } else {
