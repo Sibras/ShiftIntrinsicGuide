@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 import QtQuick 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Layouts 6.0
@@ -23,8 +23,8 @@ Item {
     width: parent.width
     height: parent.height
 
-    property variant catColours: ["darkgrey", "firebrick", "tomato", "sandybrown", "gold", "greenyellow", 
-        "forestgreen", "turquoise", "dodgerblue", "midnightblue", "slateblue", "darkviolet", 
+    property variant catColours: ["darkgrey", "firebrick", "tomato", "sandybrown", "gold", "greenyellow",
+        "forestgreen", "turquoise", "dodgerblue", "midnightblue", "slateblue", "darkviolet",
         "mediumvioletred", "saddlebrown", "darkorange", "red", "white", "white", "white"]
 
     Pane {

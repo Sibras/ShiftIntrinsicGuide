@@ -9,7 +9,7 @@ Row {
     rightPadding: 10
     topPadding: 10
     bottomPadding: 10
-    
+
     Flickable {
         id: menuView
         width: parent.width - parent.leftPadding - parent.rightPadding

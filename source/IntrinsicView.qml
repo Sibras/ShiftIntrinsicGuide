@@ -190,7 +190,7 @@ ListView {
                             topPadding: 6
                         }
                         Item {
-                            Layout.fillWidth: true                        
+                            Layout.fillWidth: true
                             Layout.preferredHeight: 20 + verticalHeader.contentHeight + horizontalHeader.implicitHeight
                             Layout.minimumHeight: Layout.preferredHeight
                             HorizontalHeaderView {
