@@ -19,7 +19,7 @@
 #include "Application.h"
 #include "Downloader.h"
 
-constexpr uint32_t fileVersion = 0x010700;
+constexpr uint32_t fileVersion = 0x010800;
 constexpr uint32_t fileChecksum = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
@@ -150,6 +150,12 @@ bool DataProvider::create() noexcept
         {"SI8", "Integer Signed 8 (int8)"}, {"UI16", "Integer Unsigned 16 (uint16)"},
         {"UI32", "Integer Unsigned 32 (uint32)"}, {"UI64", "Integer Unsigned 64 (uint64)"},
         {"UI8", "Integer Unsigned 8 (uint8)"}};
+
+    QMap<QString, QString> archsPretty = {{"CON", "Conroe"}, {"WOL", "Wolfdale"}, {"NHM", "Nehalem"},
+        {"WSM", "Westmere"}, {"SNB", "Sandy Bridge"}, {"IVB", "Ivy Bridge"}, {"HSW", "Haswell"}, {"BDW", "Broadwell"},
+        {"SKL", "Skylake"}, {"SKX", "Skylake-X"}, {"KBL", "Kaby Lake"}, {"CFL", "Coffee Lake"}, {"CNL", "Cannon Lake"},
+        {"CLX", "Cascade Lake"}, {"ICL", "Ice Lake"}, {"TGL", "Tiger Lake"}, {"RKL", "Rocket Lake"}, {"ZEN+", "Zen+"},
+        {"ZEN2", "Zen2"}, {"ZEN3", "Zen3"}};
 
     QList<Instruction> instructions;
 
@@ -336,7 +342,8 @@ bool DataProvider::create() noexcept
                                             if (auto child2E = child2.toElement();
                                                 !child2E.isNull() && child2E.tagName() == "architecture") {
                                                 QString arch = child2E.attribute("name");
-
+                                                QString archPretty =
+                                                    archsPretty.contains(arch) ? archsPretty[arch] : std::move(arch);
                                                 for (auto child3 = child2.firstChild(); !child3.isNull();
                                                      child3 = child3.nextSibling()) {
                                                     if (auto child3E = child3.toElement();
@@ -385,7 +392,7 @@ bool DataProvider::create() noexcept
                                                         }
 
                                                         // Add to list
-                                                        measurements.emplaceBack(std::move(arch), latency,
+                                                        measurements.emplaceBack(std::move(archPretty), latency,
                                                             latencyMemory, throughput, uops, std::move(ports));
                                                         break;
                                                     }

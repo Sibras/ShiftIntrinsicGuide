@@ -20,7 +20,7 @@ import QtQuick.Layouts 6.0
 
 ApplicationWindow {
     visible: true
-    width: 1920
+    width: 1600
     height: 1080
     title: "Shift Intrinsic Guide"
     Universal.theme: Universal.Dark

@@ -202,15 +202,16 @@ ListView {
                                 syncView: tableView
                                 anchors.right: tableView.left
                                 anchors.top: tableView.top
-                                leftMargin: 75
+                                leftMargin: 150
+                                width: 100
                             }
                             TableView {
                                 id: tableView
                                 interactive: false
                                 anchors.fill: parent
                                 topMargin: horizontalHeader.implicitHeight
-                                leftMargin: 75
-                                columnWidthProvider: function (column) { return 100; }
+                                leftMargin: verticalHeader.leftMargin
+                                columnWidthProvider: function (column) { return 85; }
                                 model: intrinsicMeasurements
                                 clip: true
                                 delegate: Label {
