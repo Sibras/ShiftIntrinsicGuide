@@ -19,6 +19,43 @@
 
 #include <QAbstractListModel>
 
+class MeasurementModel;
+
+class InstructionModeled
+{
+public:
+    friend class IntrinsicModel;
+
+    InstructionModeled(const InstructionModeled& other) noexcept = default;
+
+    InstructionModeled(InstructionModeled&& other) noexcept = default;
+
+    InstructionModeled& operator=(const InstructionModeled& other) noexcept = default;
+
+    InstructionModeled& operator=(InstructionModeled&& other) noexcept = default;
+
+    InstructionModeled(InstructionIndexed&& base, QObject* parent);
+
+    ~InstructionModeled() noexcept = default;
+
+private:
+    QString fullName;           /**< Intrinsics name combined with return and parameters */
+    QString name;               /**< The intrinsics name */
+    QString description;        /**< The description */
+    QString operation;          /**< The pseudo code operation */
+    QString header;             /**< The instructions required include header */
+    QString cpuidText;          /**< The required CPUID`s as user readable text */
+    QString typeText;           /**< The required types as user readable text */
+    QString categoryText;       /**< The categories of operation as user readable text */
+    uint32_t technology = 0;    /**< The required technology (e.g. AVX etc.). Indexes into allTechnologies */
+    QList<uint32_t> types;      /**< The data types operated on (e.g. Integer/Float etc.). Indexes into allTypes */
+    QList<uint32_t> categories; /**< The category of operation (e.g. Arithmetic etc.). Indexes into allCategories */
+    QString instruction;        /**< The intrinsics assembly equivalent */
+    std::shared_ptr<MeasurementModel> measurements; /**< The list of measurements */
+};
+
+Q_DECLARE_METATYPE(InstructionModeled);
+
 class IntrinsicModel final : public QAbstractListModel
 {
     Q_OBJECT
@@ -63,7 +100,7 @@ public:
     /**
      * Get the number of rows in the model.
      * @note Used Automatically by Qt to get number of items in the list.
-     * @param parameter1 (Optional) The first parameter.
+     * @param parameter1 The first parameter.
      * @return The number of rows.
      */
     [[nodiscard]] int rowCount(const QModelIndex& parameter1) const noexcept override;
@@ -72,7 +109,7 @@ public:
      * Get data for specific value from a list element.
      * @note Used Automatically by Qt to get the value of a data element.
      * @param index Zero-based index of the list item in the model.
-     * @param role  (Optional) The data element to retrieve.
+     * @param role  The data element to retrieve.
      * @return A QVariant.
      */
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const noexcept override;
@@ -99,5 +136,5 @@ public:
     void load(QList<InstructionIndexed>& data) noexcept;
 
 private:
-    QList<InstructionIndexed> instructions; /**< The list of all known intrinsics */
+    QList<InstructionModeled> instructions; /**< The list of all known intrinsics */
 };

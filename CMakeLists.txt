@@ -57,6 +57,7 @@ target_sources(ShiftIntrinsicGuide PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include/TechnologyModel.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/TypeModel.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/CategoryModel.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/MeasurementModel.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/Downloader.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/DataProvider.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp"
@@ -66,6 +67,7 @@ target_sources(ShiftIntrinsicGuide PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/source/TechnologyModel.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/TypeModel.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/CategoryModel.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/MeasurementModel.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/Downloader.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/DataProvider.cpp"
 )

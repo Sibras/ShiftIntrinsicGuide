@@ -17,6 +17,7 @@
 #include "IntrinsicModel.h"
 
 #include "Application.h"
+#include "MeasurementModel.h"
 
 IntrinsicModel::IntrinsicModel(QObject* parent) noexcept
     : QAbstractListModel(parent)
@@ -56,7 +57,7 @@ QVariant IntrinsicModel::data(const QModelIndex& index, const int role) const no
             case IntrinsicRoleInstruction:
                 return instructions.at(index.row()).instruction;
             case IntrinsicRoleMeasurements:
-                return QVariant::fromValue(instructions.at(index.row()).measurements);
+                return QVariant::fromValue(reinterpret_cast<QObject*>(instructions.at(index.row()).measurements.get()));
             default:
                 break;
         }
@@ -84,7 +85,25 @@ Qt::ItemFlags IntrinsicModel::flags(const QModelIndex& /*index*/) const noexcept
 void IntrinsicModel::load(QList<InstructionIndexed>& data) noexcept
 {
     emit beginInsertRows(QModelIndex(), 0, static_cast<int>(data.count()) - 1);
-    // Copy in data
-    instructions = std::move(data);
+    // Move in data
+    for (auto& i : data) {
+        instructions.emplaceBack(std::move(i), reinterpret_cast<QObject*>(this));
+    }
     emit endInsertRows();
 }
+
+InstructionModeled::InstructionModeled(InstructionIndexed&& base, QObject* parent)
+    : fullName(std::forward<QString>(base.fullName))
+    , name(std::forward<QString>(base.name))
+    , description(std::forward<QString>(base.description))
+    , operation(std::forward<QString>(base.operation))
+    , header(std::forward<QString>(base.header))
+    , cpuidText(std::forward<QString>(base.cpuidText))
+    , typeText(std::forward<QString>(base.typeText))
+    , categoryText(std::forward<QString>(base.categoryText))
+    , technology(base.technology)
+    , types(std::forward<QList<uint32_t>>(base.types))
+    , categories(std::forward<QList<uint32_t>>(base.categories))
+    , instruction(std::forward<QString>(base.instruction))
+    , measurements(std::make_shared<MeasurementModel>(std::forward<QList<Measurements>>(base.measurements), parent))
+{}

@@ -178,6 +178,51 @@ ListView {
                         font.pointSize: Qt.application.font.pixelSize - 2
                         visible: intrinsicOperation.length !== 0
                     }
+                    Label {
+                        text: "<h3>Performance</h3>"
+                        verticalAlignment: Text.AlignVCenter
+                        bottomPadding: 0
+                        leftPadding: 20
+                        topPadding: 6
+                    }
+                    Item {
+                        Layout.fillWidth: true                        
+                        Layout.preferredHeight: 20 + verticalHeader.contentHeight + horizontalHeader.implicitHeight
+                        Layout.minimumHeight: Layout.preferredHeight
+                        HorizontalHeaderView {
+                            id: horizontalHeader
+                            syncView: tableView
+                            anchors.left: tableView.left
+                        }
+                        VerticalHeaderView {
+                            id: verticalHeader
+                            syncView: tableView
+                            anchors.right: tableView.left
+                            anchors.top: tableView.top
+                            leftMargin: 75
+                        }
+                        TableView {
+                            id: tableView
+                            interactive: false
+                            anchors.fill: parent
+                            topMargin: horizontalHeader.implicitHeight
+                            leftMargin: 75
+                            columnWidthProvider: function (column) { return 100; }
+                            model: intrinsicMeasurements
+                            clip: true
+                            delegate: Label {
+                                text: display
+                                font.pixelSize: Qt.application.font.pixelSize
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+                                bottomPadding: 6
+                                topPadding: 6
+                                background: Rectangle{
+                                    color: palette.shadow
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

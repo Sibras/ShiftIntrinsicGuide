@@ -17,6 +17,7 @@
 #include "Application.h"
 
 #include "DataProvider.h"
+#include "MeasurementModel.h"
 
 #include <QQmlContext>
 
@@ -51,6 +52,7 @@ int Application::run() noexcept
     qmlRegisterUncreatableType<TechnologyModel>("ShiftIntrinsicGuide", 1, 0, "TechnologyModel", "");
     qmlRegisterUncreatableType<CategoryModel>("ShiftIntrinsicGuide", 1, 0, "CategoryModel", "");
     qmlRegisterUncreatableType<TypeModel>("ShiftIntrinsicGuide", 1, 0, "TypeModel", "");
+    qmlRegisterUncreatableType<MeasurementModel>("ShiftIntrinsicGuide", 1, 0, "MeasurementModel", "");
 
     // Load the UI with the default QML file
     engine.load(QUrl(QStringLiteral("qrc:/qml/source/main.qml")));
