@@ -212,7 +212,7 @@ ListView {
                                 anchors.fill: parent
                                 topMargin: horizontalHeader.implicitHeight
                                 leftMargin: verticalHeader.leftMargin
-                                columnWidthProvider: function (column) { return 85; }
+                                columnWidthProvider: function (column) { return column < 3 ? 85 : 240; }
                                 model: intrinsicMeasurements
                                 clip: true
                                 delegate: Label {
