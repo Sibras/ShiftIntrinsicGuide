@@ -36,9 +36,13 @@ class Application final : public QObject
 
     Q_PROPERTY(float progress READ getProgress WRITE setProgress NOTIFY notifyProgressChanged)
 
-    Q_PROPERTY(bool isLoaded READ getLoaded NOTIFY isLoadedChanged)
+    Q_PROPERTY(bool isLoaded READ getLoaded NOTIFY notifyLoadedChanged)
 
-    Q_PROPERTY(QString LoadingTitle READ getLoadingTitle NOTIFY notifyLoadingTitleChanged)
+    Q_PROPERTY(QString loadingTitle READ getLoadingTitle NOTIFY notifyLoadingTitleChanged)
+
+    Q_PROPERTY(QString version READ getVersion NOTIFY notifyVersionChanged)
+
+    Q_PROPERTY(QString dataVersion READ getDataVersion NOTIFY notifyDataVersionChanged)
 
 public:
     Application(const Application&) = delete;
@@ -60,6 +64,11 @@ public:
      * @returns An int error code.
      */
     int run() noexcept;
+
+    /**
+     * Loads/Re-loads intrinsic data.
+     */
+    Q_INVOKABLE void resetData() noexcept;
 
     /**
      * Displays an dialog with an OK button.
@@ -117,7 +126,7 @@ public:
     void setLoaded(bool newLoaded = true) noexcept;
 
     /** Notify the GUI that the loaded has changed. */
-    Q_SIGNAL void isLoadedChanged() const;
+    Q_SIGNAL void notifyLoadedChanged() const;
 
     /**
      * Gets the title for the loading text.
@@ -134,6 +143,24 @@ public:
     /** Notify the GUI that the available loading title has changed. */
     Q_SIGNAL void notifyLoadingTitleChanged() const;
 
+    /**
+     * Gets the current program version.
+     * @return The version string.
+     */
+    QString getVersion() const noexcept;
+
+    /** Notify the GUI that the version has changed. */
+    Q_SIGNAL void notifyVersionChanged() const;
+
+    /**
+     * Gets the current intrinsic data version.
+     * @return The version string.
+     */
+    QString getDataVersion() const noexcept;
+
+    /** Notify the GUI that the version has changed. */
+    Q_SIGNAL void notifyDataVersionChanged() const;
+
 private:
     /**
      * Sets up the internal data models
@@ -147,6 +174,8 @@ private:
     CategoryModel categoriesModel;
     IntrinsicModel intrinsicsModel;
     IntrinsicProxyModel intrinsicProxyModel;
+    QString version;
+    QString dataVersion;
 
     struct OKDialogData final
     {
@@ -156,10 +185,10 @@ private:
 
     QQueue<OKDialogData> queueOK;
     QMutex mutexOK;
-    std::atomic<float> progress = 0.0f;
+    std::atomic<float> progress = 0.0F;
     std::atomic_bool loaded = false;
     QString loading = "Loading...";
     DataProvider provider;
-    QFuture<bool> dataLoad;
-    QFutureWatcher<bool> watcher;
+    std::unique_ptr<QFuture<bool>> dataLoad = nullptr;
+    std::unique_ptr<QFutureWatcher<bool>> watcher = nullptr;
 };

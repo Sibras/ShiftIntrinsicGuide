@@ -18,6 +18,7 @@
 
 #include "DataProvider.h"
 #include "MeasurementModel.h"
+#include "Version.h"
 
 #include <QQmlContext>
 
@@ -30,13 +31,16 @@ Application::Application(QObject* parent) noexcept
     , typesModel(this)
     , categoriesModel(this)
     , intrinsicsModel(this)
+    , version(SIG_VERSION_STR)
     , provider(this)
 {}
 
 Application::~Application() noexcept
 {
     loaded = true; // Use loaded to shutdown any running data init
-    dataLoad.waitForFinished();
+    if (dataLoad.get() != nullptr) {
+        dataLoad->waitForFinished();
+    }
 }
 
 int Application::run() noexcept
@@ -62,13 +66,35 @@ int Application::run() noexcept
     }
 
     // Queue up the model initialisation
-    connect(&watcher, &QFutureWatcher<bool>::finished, this, &Application::setupData);
+    dataLoad = std::make_unique<QFuture<bool>>();
+    watcher = std::make_unique<QFutureWatcher<bool>>();
+    connect(watcher.get(), &QFutureWatcher<bool>::finished, this, &Application::setupData);
     QTimer::singleShot(1000, [this] {
-        dataLoad = QtConcurrent::run([this] { return provider.setup(); });
-        watcher.setFuture(dataLoad);
+        *dataLoad = QtConcurrent::run([this] { return provider.setup(); });
+        watcher->setFuture(*dataLoad);
     });
 
-    return app.exec();
+    return QGuiApplication::exec();
+}
+
+void Application::resetData() noexcept
+{
+    // Delete old cache
+    if (QFile fileCache("./dataCache"); fileCache.exists()) {
+        fileCache.remove();
+    }
+
+    setProgress(0.0F);
+    setLoaded(false);
+
+    // Queue up the model initialisation
+    dataLoad = std::make_unique<QFuture<bool>>();
+    watcher = std::make_unique<QFutureWatcher<bool>>();
+    connect(watcher.get(), &QFutureWatcher<bool>::finished, this, &Application::setupData);
+    QTimer::singleShot(1000, [this] {
+        *dataLoad = QtConcurrent::run([this] { return provider.setup(); });
+        watcher->setFuture(*dataLoad);
+    });
 }
 
 void Application::addOKDialog(const QString& title, const std::function<void()>& callback)
@@ -122,7 +148,7 @@ float Application::getProgress() const noexcept
 
 void Application::setProgress(const float newProgress) noexcept
 {
-    progress = fmin(fabs(newProgress), 1.0f);
+    progress = fmin(fabs(newProgress), 1.0F);
     emit notifyProgressChanged();
 }
 
@@ -134,7 +160,7 @@ bool Application::getLoaded() const noexcept
 void Application::setLoaded(const bool newLoaded) noexcept
 {
     if (bool expected = !newLoaded; loaded.compare_exchange_strong(expected, newLoaded)) {
-        emit isLoadedChanged();
+        emit notifyLoadedChanged();
     }
 }
 
@@ -149,9 +175,19 @@ void Application::setLoadingTitle(const QString& title) noexcept
     emit notifyLoadingTitleChanged();
 }
 
+QString Application::getVersion() const noexcept
+{
+    return version;
+}
+
+QString Application::getDataVersion() const noexcept
+{
+    return dataVersion;
+}
+
 void Application::setupData() noexcept
 {
-    if (dataLoad.result()) {
+    if (dataLoad->result()) {
         // Setup data models
         technologiesModel.load(provider.getData().allTechnologies);
         typesModel.load(provider.getData().allTypes);
@@ -166,13 +202,22 @@ void Application::setupData() noexcept
         connect(&categoriesModel, &CategoryModel::categoriesyChanged, &intrinsicProxyModel,
             &IntrinsicProxyModel::filterUpdated);
 
+        dataVersion = std::move(provider.getData().version);
+
         // Clear data provider
         provider.clear();
 
+        // Remove future
+        disconnect(watcher.get(), &QFutureWatcher<bool>::finished, this, &Application::setupData);
+        dataLoad = nullptr;
+        watcher = nullptr;
+
         // Update UI
-        setProgress(1.0f);
+        emit notifyDataVersionChanged();
+        setProgress(1.0F);
         setLoaded(true);
     } else {
+        setLoaded(true);
         addOKDialog("Failed to get intrinsic data", [] {});
     }
 }

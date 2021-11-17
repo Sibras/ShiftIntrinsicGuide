@@ -50,7 +50,7 @@ Row {
                             topPadding: 0
                             bottomPadding: 0
                             background: Rectangle {
-                                color: catColours[index]
+                                color: catColours[index >= 0 ? index : 0]
                                 width: parent.height * 1.3
                                 height: parent.height * 1.3
                                 anchors.verticalCenter: parent.verticalCenter

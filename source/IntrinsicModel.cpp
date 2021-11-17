@@ -84,6 +84,11 @@ Qt::ItemFlags IntrinsicModel::flags(const QModelIndex& /*index*/) const noexcept
 
 void IntrinsicModel::load(QList<InstructionIndexed>& data) noexcept
 {
+    if (!instructions.isEmpty()) {
+        emit beginResetModel();
+        instructions.clear();
+        emit endResetModel();
+    }
     emit beginInsertRows(QModelIndex(), 0, static_cast<int>(data.count()) - 1);
     // Move in data
     for (auto& i : data) {

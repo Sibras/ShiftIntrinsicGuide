@@ -19,8 +19,10 @@
 #include "Application.h"
 #include "Downloader.h"
 
-constexpr uint32_t fileVersion = 0x010801;
-constexpr uint32_t fileChecksum = 0xA654BE39;
+#include <QDateTime>
+
+constexpr uint32_t fileVersion = 0x010901;
+constexpr uint32_t fileID = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
     : parentApp(parent)
@@ -58,7 +60,7 @@ bool DataProvider::setup() noexcept
 
     if (!fail) {
         // Remove loading progress from parent
-        parentApp->setProgress(1.0f);
+        parentApp->setProgress(1.0F);
     }
     return true;
 }
@@ -76,28 +78,33 @@ bool DataProvider::load() noexcept
 {
     if (QFile fileCache("./dataCache"); fileCache.exists() && fileCache.open(QIODevice::ReadOnly)) {
         // Reset UI values to default
-        progressModifier = 1.0f;
-        progress = 0.0f;
+        progressModifier = 1.0F;
+        progress = 0.0F;
         parentApp->setLoadingTitle("Loading...");
-        setProgress(0.0f); // Trigger parent update
+        setProgress(0.0F); // Trigger parent update
 
         // Load data from cache
         parentApp->setLoadingTitle("Loading data from cache...");
         QDataStream in(&fileCache);
         uint32_t check;
         in >> check;
-        if (check != fileChecksum) {
-            qWarning("File load had invalid checksum");
+        if (check != fileID) {
+            qWarning() << "File load had invalid identifier";
             return false;
         }
         in >> check;
         if (check != fileVersion) {
-            qInfo("File version to old, creating new one");
+            qInfo() << "File version to old, creating new one";
             return false;
         }
         in.setVersion(QDataStream::Qt_6_2);
+        in >> data.date;
+        if (QDateTime(data.date, QTime::currentTime()).daysTo(QDateTime::currentDateTime()) > 180) {
+            qInfo() << "File data is to old, creating new one";
+            return false;
+        }
         in >> data;
-        addProgress(1.0f);
+        addProgress(1.0F);
         return true;
     }
     return false;
@@ -110,11 +117,12 @@ bool DataProvider::store() noexcept
         parentApp->setLoadingTitle("Writing data store to disk...");
         // Store data from cache
         QDataStream out(&fileCache);
-        out << fileChecksum;
+        out << fileID;
         out << fileVersion;
         out.setVersion(QDataStream::Qt_6_2);
+        out << data.date;
         out << data;
-        addProgress(1.0f);
+        addProgress(1.0F);
         return true;
     }
     return false;
@@ -123,10 +131,10 @@ bool DataProvider::store() noexcept
 bool DataProvider::create() noexcept
 {
     // Reset UI values to default
-    progressModifier = 1.0f / 8.0f;
-    progress = 0.0f;
+    progressModifier = 1.0F / 8.0F;
+    progress = 0.0F;
     parentApp->setLoadingTitle("Creating...");
-    setProgress(0.0f); // Trigger parent update
+    setProgress(0.0F); // Trigger parent update
 
     QDomDocument dataXMLIntel, dataXMLOps;
     if (!downloadCache("./intrin.xml", "Intel Intrinsic Guide", dataXMLIntel,
@@ -142,7 +150,12 @@ bool DataProvider::create() noexcept
     QDomElement root = dataXMLIntel.documentElement();
     QDomElement root2 = dataXMLOps.documentElement();
     data.version = root.attribute("version", "3.6.0");
-    data.date = QDate::fromString(root.attribute("date", "06/30/2021"), "MM/dd/YYYY");
+    data.date = QDate::fromString(root.attribute("date", "06/30/2021"), "MM/dd/yyyy");
+#ifdef _DEBUG
+    if (!data.date.isValid()) {
+        qDebug() << "Invalid source date detected for data:" << root.attribute("date", "06/30/2021");
+    }
+#endif
 
     QMap<QString, QString> typesPretty = {{"BF16", "BFloat16"}, {"FP16", "Float16 (half)"}, {"FP32", "Float32 (float)"},
         {"FP64", "Float64 (double)"}, {"MASK", "Mask"}, {"SI16", "Integer Signed 16 (int16)"},
@@ -400,6 +413,11 @@ bool DataProvider::create() noexcept
                                                 }
                                             }
                                         }
+
+                                        // Check if shutdown has been called
+                                        if (parentApp->getLoaded()) {
+                                            return false;
+                                        }
                                         break;
                                     }
                                 }
@@ -502,7 +520,7 @@ bool DataProvider::create() noexcept
         }
     }
 
-    addProgress(1.0f);
+    addProgress(1.0F);
 
     // Sort the 'all' lists
     data.allTypes.sort();
@@ -565,9 +583,9 @@ bool DataProvider::downloadCache(
     // Check if cached xml file exists
     if (QFile fileCache(fileName); fileCache.exists() && fileCache.open(QIODevice::ReadOnly)) {
         parentApp->setLoadingTitle("Loading " + name + " from cache...");
-        addProgress(2.0f);
+        addProgress(2.0F);
         QString errorMessage;
-        int errorLine, errorColumn;
+        int errorLine = -1, errorColumn = -1;
         if (!dataXML.setContent(&fileCache, &errorMessage, &errorLine, &errorColumn)) {
             qCritical() << "Failed to parse XML: " << errorMessage << " (" << errorLine << ", " << errorColumn << ")";
             // Delete broken file cache
@@ -589,19 +607,19 @@ bool DataProvider::downloadCache(
         if (parentApp->getLoaded()) {
             return false;
         }
-        addProgress(1.0f);
+        addProgress(1.0F);
 
         // Convert to xml
         parentApp->setLoadingTitle("Converting " + name + "...");
         QString errorMessage;
-        int errorLine, errorColumn;
+        int errorLine = -1, errorColumn = -1;
         if (!dataXML.setContent(dlData, &errorMessage, &errorLine, &errorColumn)) {
             qCritical() << "Failed to parse XML: " << errorMessage << " (" << errorLine << ", " << errorColumn << ")";
 
             parentApp->addOKDialog("Failed to pass " + name + " data", [] {});
             return false;
         }
-        addProgress(1.0f);
+        addProgress(1.0F);
 
         // Check if shutdown has been called
         if (parentApp->getLoaded()) {
@@ -624,6 +642,6 @@ bool DataProvider::downloadCache(
         }
     }
 
-    addProgress(1.0f);
+    addProgress(1.0F);
     return true;
 }

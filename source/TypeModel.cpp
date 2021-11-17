@@ -74,6 +74,11 @@ bool TypeModel::setData(const QModelIndex& index, const QVariant& value, const i
 
 void TypeModel::load(QList<QString>& types) noexcept
 {
+    if (!allTypes.isEmpty()) {
+        emit beginResetModel();
+        allTypes.clear();
+        emit endResetModel();
+    }
     emit beginInsertRows(QModelIndex(), 0, static_cast<int>(types.count()) - 1);
     // Copy in data
     for (auto& i : types) {

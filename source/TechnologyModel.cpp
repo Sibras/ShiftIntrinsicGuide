@@ -77,6 +77,11 @@ bool TechnologyModel::setData(const QModelIndex& index, const QVariant& value, c
 
 void TechnologyModel::load(QList<QString>& technologies) noexcept
 {
+    if (!allTechnologies.isEmpty()) {
+        emit beginResetModel();
+        allTechnologies.clear();
+        emit endResetModel();
+    }
     emit beginInsertRows(QModelIndex(), 0, static_cast<int>(technologies.count()) - 1);
     // Copy in data
     for (auto& i : technologies) {

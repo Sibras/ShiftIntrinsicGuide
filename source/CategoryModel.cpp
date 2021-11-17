@@ -77,6 +77,11 @@ bool CategoryModel::setData(const QModelIndex& index, const QVariant& value, con
 
 void CategoryModel::load(QList<QString>& categories) noexcept
 {
+    if (!allCategories.isEmpty()) {
+        emit beginResetModel();
+        allCategories.clear();
+        emit endResetModel();
+    }
     emit beginInsertRows(QModelIndex(), 0, static_cast<int>(categories.count()) - 1);
     // Copy in data
     for (auto& i : categories) {

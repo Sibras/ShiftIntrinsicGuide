@@ -40,7 +40,7 @@ Item {
             anchors.verticalCenterOffset: 140
             width: 500
             height: 50
-            text: application.LoadingTitle
+            text: application.loadingTitle
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             font.pointSize: 16
@@ -133,5 +133,39 @@ Item {
         anchors.verticalCenterOffset: 84
         anchors.horizontalCenterOffset: 0
         running: !application.isLoaded
+    }
+
+    Row {
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.bottomMargin: 15
+        anchors.rightMargin: 15
+        visible: application.progress === 1
+        Label {
+            text: "Version: " + application.version + " (Data Version: "
+            rightPadding: 0
+            leftPadding: 0
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignRight
+        }
+        Label {
+            text: application.dataVersion
+            rightPadding: 0
+            leftPadding: 0
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignRight
+            font.underline: true
+            MouseArea {
+                anchors.fill: parent
+                onDoubleClicked: application.resetData()
+            }
+        }
+        Label {
+            text: ")"
+            rightPadding: 0
+            leftPadding: 0
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignRight
+        }
     }
 }

@@ -23,30 +23,28 @@ project(ShiftIntrinsicGuide
     DESCRIPTION "A GUI for viewing x86 intrinsics and associated performance data"
 )
 
-
-# Only do these if this is the main project, and not if it is included through add_subdirectory
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    # Default to a release build if desired configuration is not specified
-    if(NOT CMAKE_CONFIGURATION_TYPES)
-        if(NOT CMAKE_BUILD_TYPE)
-            message(STATUS "Setting build type to 'Release' as none was specified.")
-            set_property(CACHE CMAKE_BUILD_TYPE PROPERTY VALUE "Release")
-        endif()
+# Default to a release build if desired configuration is not specified
+if(NOT CMAKE_CONFIGURATION_TYPES)
+    if(NOT CMAKE_BUILD_TYPE)
+        message(STATUS "Setting build type to 'Release' as none was specified.")
+        set_property(CACHE CMAKE_BUILD_TYPE PROPERTY VALUE "Release")
     endif()
-    
-    # Set the install location to the source location if not currently specified
-    if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-        message("Installing into source folder")
-        set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install CACHE PATH "..." FORCE)
-    endif()
-
-    # Use folder structure for arranging files within IDEs
-    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 endif()
+
+# Set the install location to the source location if not currently specified
+if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+    message("Installing into source folder")
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install CACHE PATH "..." FORCE)
+endif()
+
+# Use folder structure for arranging files within IDEs
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 find_package(Qt6 COMPONENTS GUI QML Network XML Concurrent REQUIRED)
 
 qt_add_executable(ShiftIntrinsicGuide MANUAL_FINALIZATION)
+
+configure_file(include/Version.h.in Version.h)
 
 # Add in the executable code
 target_sources(ShiftIntrinsicGuide PRIVATE
@@ -78,7 +76,8 @@ target_compile_features(ShiftIntrinsicGuide
 
 target_include_directories(ShiftIntrinsicGuide
     PRIVATE
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+    "${PROJECT_BINARY_DIR}"
 )
 
 target_link_libraries(ShiftIntrinsicGuide PRIVATE

@@ -205,15 +205,13 @@ public:
 
     friend QDataStream& operator<<(QDataStream& out, const InternalData& other)
     {
-        out << other.allTechnologies << other.allTypes << other.allCategories << other.instructions << other.version
-            << other.date;
+        out << other.allTechnologies << other.allTypes << other.allCategories << other.instructions << other.version;
         return out;
     }
 
     friend QDataStream& operator>>(QDataStream& in, InternalData& other)
     {
-        in >> other.allTechnologies >> other.allTypes >> other.allCategories >> other.instructions >> other.version >>
-            other.date;
+        in >> other.allTechnologies >> other.allTypes >> other.allCategories >> other.instructions >> other.version;
         return in;
     }
 };
