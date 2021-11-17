@@ -112,6 +112,8 @@ qt_add_qml_module(ShiftIntrinsicGuide
     "source/IntrinsicView.qml"
 )
 
+include(InstallRequiredSystemLibraries)
+set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
 include(GNUInstallDirs)
 install(TARGETS ShiftIntrinsicGuide
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -126,3 +128,10 @@ qt_finalize_executable(ShiftIntrinsicGuide)
 # Include Qt deployment helper function
 include(DeployQt)
 deployqt(ShiftIntrinsicGuide "${CMAKE_CURRENT_SOURCE_DIR}/source/")
+
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+include(CPack)

@@ -50,6 +50,33 @@ function(windeployqt target qmldir)
                 \"$<TARGET_FILE:${target}>\"
         COMMENT "Deploying Qt..."
     )
+
+    install(CODE
+        "
+        execute_process(
+            COMMAND \"${CMAKE_COMMAND}\" -E
+                env PATH=\"${_qt_bin_dir}\" \"${WINDEPLOYQT_EXECUTABLE}\"
+                    --verbose 0
+                    --dry-run
+                    --no-compiler-runtime
+                    --qmldir ${qmldir}
+                    --list mapping
+                    \"$<TARGET_FILE:${target}>\"
+            OUTPUT_VARIABLE _output
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        separate_arguments(_files WINDOWS_COMMAND \${_output})
+        while(_files)
+            list(GET _files 0 _src)
+            list(GET _files 1 _dest)
+            execute_process(
+                COMMAND \"${CMAKE_COMMAND}\" -E
+                    copy \${_src} \"\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/\${_dest}\"
+            )
+            list(REMOVE_AT _files 0 1)
+        endwhile()
+        "
+    )
 endfunction()
 
 # Add commands that copy the required Qt files to the application bundle
