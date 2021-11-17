@@ -30,7 +30,7 @@ DataProvider::DataProvider(Application* parent) noexcept
 
 void DataProvider::setProgress(const float value) const noexcept
 {
-    const auto progress2 = progress + value * progressModifier;
+    const auto progress2 = progress + std::clamp(value, 0.0F, 1.0F) * progressModifier;
     parentApp->setProgress(progress2);
 }
 
@@ -81,12 +81,12 @@ bool DataProvider::load() noexcept
         progressModifier = 1.0F;
         progress = 0.0F;
         parentApp->setLoadingTitle("Loading...");
-        setProgress(0.0F); // Trigger parent update
+        parentApp->setProgress(0.0F);
 
         // Load data from cache
         parentApp->setLoadingTitle("Loading data from cache...");
         QDataStream in(&fileCache);
-        uint32_t check;
+        uint32_t check = 0;
         in >> check;
         if (check != fileID) {
             qWarning() << "File load had invalid identifier";
@@ -134,14 +134,16 @@ bool DataProvider::create() noexcept
     progressModifier = 1.0F / 8.0F;
     progress = 0.0F;
     parentApp->setLoadingTitle("Creating...");
-    setProgress(0.0F); // Trigger parent update
+    parentApp->setProgress(0.0F);
 
     QDomDocument dataXMLIntel, dataXMLOps;
-    if (!downloadCache("./intrin.xml", "Intel Intrinsic Guide", dataXMLIntel,
+    QString intrinFile = "./intrin.xml";
+    QString uopsFile = "./uops.xml";
+    if (!downloadCache(intrinFile, "Intel Intrinsic Guide", dataXMLIntel,
             QUrl("https://www.intel.com/content/dam/develop/public/us/en/include/intrinsics-guide/data-latest.xml"))) {
         return false;
     }
-    if (!downloadCache("./uops.xml", "uops.info", dataXMLOps, QUrl("https://www.uops.info/instructions.xml"))) {
+    if (!downloadCache(uopsFile, "uops.info", dataXMLOps, QUrl("https://www.uops.info/instructions.xml"))) {
         return false;
     }
 
@@ -571,8 +573,13 @@ bool DataProvider::create() noexcept
 
     std::sort(data.instructions.begin(), data.instructions.end());
 
-    // TODO:****************
-    // Delete any cache files from disk
+    // Delete old cache
+    if (QFile file(intrinFile); file.exists()) {
+        file.remove();
+    }
+    if (QFile file(uopsFile); file.exists()) {
+        file.remove();
+    }
 
     return true;
 }
@@ -596,7 +603,7 @@ bool DataProvider::downloadCache(
     } else {
         parentApp->setLoadingTitle("Downloading " + name + "...");
         // Download intrinsic xml
-        Downloader dl([this](const float value) { this->setProgress(value); });
+        Downloader dl([this](const float value) { setProgress(value); });
         QByteArray dlData;
         if (!dl.get(url, dlData) || dlData.isEmpty()) {
             parentApp->addOKDialog("Failed to download " + name + " data", [] {});

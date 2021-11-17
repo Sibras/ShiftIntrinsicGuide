@@ -84,6 +84,7 @@ void Application::resetData() noexcept
         fileCache.remove();
     }
 
+    setLoadingTitle("Reloading...");
     setProgress(0.0F);
     setLoaded(false);
 
