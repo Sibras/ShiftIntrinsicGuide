@@ -22,11 +22,9 @@
 
 #include <QQmlContext>
 
-int argc = 0;
-
-Application::Application(QObject* parent) noexcept
+Application::Application(int argc, char* argv[], QObject* parent) noexcept
     : QObject(parent)
-    , app(argc, nullptr)
+    , app(argc, argv)
     , technologiesModel(this)
     , typesModel(this)
     , categoriesModel(this)

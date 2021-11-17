@@ -40,9 +40,19 @@ endif()
 # Use folder structure for arranging files within IDEs
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-find_package(Qt6 COMPONENTS GUI QML Network XML Concurrent REQUIRED)
+find_package(Qt6 COMPONENTS Quick QML Network XML Concurrent REQUIRED)
 
 qt_add_executable(ShiftIntrinsicGuide MANUAL_FINALIZATION)
+
+if(WIN32)
+set_target_properties(ShiftIntrinsicGuide PROPERTIES
+    WIN32_EXECUTABLE TRUE
+)
+elseif(APPLE)
+set_target_properties(ShiftIntrinsicGuide PROPERTIES
+    MACOSX_BUNDLE TRUE
+)
+endif()
 
 configure_file(include/Version.h.in Version.h)
 
@@ -81,7 +91,7 @@ target_include_directories(ShiftIntrinsicGuide
 )
 
 target_link_libraries(ShiftIntrinsicGuide PRIVATE
-    Qt6::Gui
+    Qt6::Quick
     Qt6::Qml
     Qt6::Network
     Qt6::Xml

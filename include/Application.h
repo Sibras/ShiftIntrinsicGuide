@@ -54,7 +54,7 @@ public:
     Application& operator=(Application&&) = delete;
 
     /** Default constructor. */
-    explicit Application(QObject* parent = nullptr) noexcept;
+    explicit Application(int argc, char* argv[], QObject* parent = nullptr) noexcept;
 
     /** Destructor. */
     ~Application() noexcept override;

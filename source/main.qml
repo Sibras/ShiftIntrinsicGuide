@@ -16,7 +16,6 @@
 
 import QtQuick.Controls.Universal
 import QtQuick 6.0
-import QtQuick.Layouts 6.0
 
 ApplicationWindow {
     visible: true
