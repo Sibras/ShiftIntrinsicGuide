@@ -25,6 +25,7 @@ Row {
                 text: "<h3>Instruction Set</h3>"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
+                textFormat: Text.StyledText
                 topPadding: 6
                 bottomPadding: -15
             }
@@ -64,6 +65,7 @@ Row {
                             bottomPadding: 0
                             Layout.fillWidth: true
                             verticalAlignment: Text.AlignVCenter
+                            textFormat: Text.PlainText
                         }
 
                     }
@@ -74,6 +76,7 @@ Row {
                 text: "<h3>Type</h3>"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
+                textFormat: Text.StyledText
                 topPadding: 10
                 bottomPadding: -15
             }
@@ -105,6 +108,7 @@ Row {
                             bottomPadding: 0
                             Layout.fillWidth: true
                             verticalAlignment: Text.AlignVCenter
+                            textFormat: Text.PlainText
                         }
 
                     }
@@ -115,6 +119,7 @@ Row {
                 text: "<h3>Category</h3>"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
+                textFormat: Text.StyledText
                 topPadding: 10
                 bottomPadding: -15
             }
@@ -146,6 +151,7 @@ Row {
                             bottomPadding: 0
                             Layout.fillWidth: true
                             verticalAlignment: Text.AlignVCenter
+                            textFormat: Text.PlainText
                         }
 
                     }

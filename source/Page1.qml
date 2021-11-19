@@ -44,6 +44,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             font.pointSize: 16
+            textFormat: Text.PlainText
         }
 
         ProgressBar {

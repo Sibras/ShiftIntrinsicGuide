@@ -39,6 +39,7 @@ ListView {
                     bottomPadding: 0
                     verticalAlignment: Text.AlignVCenter
                     Layout.fillWidth: true
+                    textFormat: Text.StyledText
                 }
                 Label {
                     text: intrinsicInstruction
@@ -49,6 +50,7 @@ ListView {
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignRight
                     Layout.alignment: Qt.AlignRight
+                    textFormat: Text.PlainText
                 }
             }
             RowLayout {
@@ -66,6 +68,7 @@ ListView {
                         text: "<h3>Synopsis</h3>"
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignLeft
+                        textFormat: Text.StyledText
                         leftPadding: 20
                         topPadding: 6
                         bottomPadding: -15
@@ -78,6 +81,7 @@ ListView {
                             topPadding: 0
                             bottomPadding: 0
                             verticalAlignment: Text.AlignVCenter
+                            textFormat: Text.PlainText
                             font.pointSize: Qt.application.font.pixelSize - 2
                         }
                         TextEdit {
@@ -85,6 +89,7 @@ ListView {
                             topPadding: 0
                             bottomPadding: 0
                             verticalAlignment: Text.AlignVCenter
+                            textFormat: Text.PlainText
                             font.pointSize: Qt.application.font.pixelSize - 2
                             readOnly: true
                             selectByMouse: true
@@ -98,6 +103,7 @@ ListView {
                             topPadding: 0
                             bottomPadding: 0
                             verticalAlignment: Text.AlignVCenter
+                            textFormat: Text.PlainText
                             font.pointSize: Qt.application.font.pixelSize - 2
                         }
                         TextEdit {
@@ -105,6 +111,7 @@ ListView {
                             topPadding: 0
                             bottomPadding: 0
                             verticalAlignment: Text.AlignVCenter
+                            textFormat: Text.PlainText
                             font.pointSize: Qt.application.font.pixelSize - 2
                             readOnly: true
                             selectByMouse: true
@@ -115,6 +122,7 @@ ListView {
                             topPadding: 0
                             bottomPadding: 0
                             verticalAlignment: Text.AlignVCenter
+                            textFormat: Text.PlainText
                             font.pointSize: Qt.application.font.pixelSize - 2
                         }
                     }
@@ -124,6 +132,7 @@ ListView {
                         topPadding: 0
                         bottomPadding: 0
                         verticalAlignment: Text.AlignVCenter
+                        textFormat: Text.PlainText
                         font.pointSize: Qt.application.font.pixelSize - 2
                         visible: intrinsicCPUIDText.length !== 0
                     }
@@ -133,6 +142,7 @@ ListView {
                         topPadding: 0
                         bottomPadding: 0
                         verticalAlignment: Text.AlignVCenter
+                        textFormat: Text.PlainText
                         font.pointSize: Qt.application.font.pixelSize - 2
                     }
                     Label {
@@ -141,11 +151,13 @@ ListView {
                         topPadding: 0
                         bottomPadding: 0
                         verticalAlignment: Text.AlignVCenter
+                        textFormat: Text.PlainText
                         font.pointSize: Qt.application.font.pixelSize - 2
                     }
                     Label {
                         text: "<h3>Description</h3>"
                         verticalAlignment: Text.AlignVCenter
+                        textFormat: Text.StyledText
                         leftPadding: 20
                         topPadding: 6
                         bottomPadding: -15
@@ -156,6 +168,7 @@ ListView {
                         topPadding: 0
                         bottomPadding: 0
                         verticalAlignment: Text.AlignVCenter
+                        textFormat: Text.StyledText
                         Layout.fillWidth: true
                         wrapMode: Text.WordWrap
                         font.pointSize: Qt.application.font.pixelSize - 2
@@ -163,6 +176,7 @@ ListView {
                     Label {
                         text: "<h3>Operation</h3>"
                         verticalAlignment: Text.AlignVCenter
+                        textFormat: Text.StyledText
                         leftPadding: 20
                         topPadding: 6
                         bottomPadding: -15
@@ -174,6 +188,7 @@ ListView {
                         topPadding: 0
                         bottomPadding: 0
                         verticalAlignment: Text.AlignVCenter
+                        textFormat: Text.PlainText
                         Layout.fillWidth: true
                         wrapMode: Text.WordWrap
                         font.pointSize: Qt.application.font.pixelSize - 2
@@ -185,6 +200,7 @@ ListView {
                         Label {
                             text: "<h3>Performance</h3>"
                             verticalAlignment: Text.AlignVCenter
+                            textFormat: Text.StyledText
                             bottomPadding: 0
                             leftPadding: 20
                             topPadding: 6
@@ -220,6 +236,7 @@ ListView {
                                     font.pixelSize: Qt.application.font.pixelSize
                                     verticalAlignment: Text.AlignVCenter
                                     horizontalAlignment: Text.AlignHCenter
+                                    textFormat: Text.PlainText
                                     bottomPadding: 6
                                     topPadding: 6
                                     background: Rectangle{
