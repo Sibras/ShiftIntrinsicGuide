@@ -9,7 +9,7 @@ It combines data from the following sources:
 
 ## Screenshot
 
-[Screenshot](Screenshot.jpg)
+![Screenshot](Screenshot.jpg "Example program screenshot")
 
 ## Features
 
