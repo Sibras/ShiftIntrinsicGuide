@@ -1,10 +1,10 @@
 ## ShiftIntrinsicGuide
 
-ShiftIntrinsicGuide is a GUI for x86 intrinsic instruction information. It proveds a searchable list of all currently available intrinsic instructions and combines it with real-world latency/throughput measurements from a variet of different hardware architectures (Intel and AMD).
+ShiftIntrinsicGuide is a GUI for x86 intrinsic instruction information. It proveds a searchable list of all currently available intrinsic instructions and combines it with real-world latency/throughput measurements from a variety of different hardware architectures (Intel and AMD).
 
 It combines data from the following sources:
 
-- Intrinsics from [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html).
+- Intrinsic data from [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html).
 - Performance data from [uops.info](https://www.uops.info).
 
 ## Screenshot
@@ -19,7 +19,7 @@ It combines data from the following sources:
     - Assembly instruction
     - Required x86 technology level (e.g. SSE3, AVX etc.)
     - Types operated on (e.g. float, 8-bit integers etc.)
-    - Instruction category (e.g. arithmetic, bitwise etc.)
+    - Instruction category (e.g. arithmetic, load etc.)
 - Displays information for each intrinsic such as:
     - Intrinsic form
     - Assembly instruction
@@ -32,7 +32,7 @@ It combines data from the following sources:
     - Throughput
     - uops
     - Port usage
-- Offline use: Data is directly scraped from the online sources on first run and cached for future use.
+- Offline use: Data is directly retrieved from the online sources on first run and cached for future use.
 - Periodic data update checks (as well as manual)
 
 ## Downloads
