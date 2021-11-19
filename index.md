@@ -7,6 +7,10 @@ It combines data from the following sources:
 - Intrinsics from [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html).
 - Performance data from [uops.info](https://www.uops.info).
 
+## Screenshot
+
+[Screenshot](Screenshot.jpg)
+
 ## Features
 
 - Searchable list of all available x86 intrinsic instructions.
