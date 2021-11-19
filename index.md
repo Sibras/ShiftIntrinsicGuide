@@ -1,37 +1,36 @@
-## Welcome to GitHub Pages
+## ShiftIntrinsicGuide
 
-You can use the [editor on GitHub](https://github.com/Sibras/ShiftIntrinsicGuide/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+ShiftIntrinsicGuide is a GUI for x86 intrinsic instruction information. It proveds a searchable list of all currently available intrinsic instructions and combines it with real-world latency/throughput measurements from a variet of different hardware architectures (Intel and AMD).
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+It combines data from the following sources:
 
-### Markdown
+- Intrinsics from [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html).
+- Performance data from [uops.info](https://www.uops.info).
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Features
 
-```markdown
-Syntax highlighted code block
+- Searchable list of all available x86 intrinsic instructions.
+- Instructions searchable by:
+    - Intrinsic name
+    - Assembly instruction
+    - Required x86 technology level (e.g. SSE3, AVX etc.)
+    - Types operated on (e.g. float, 8-bit integers etc.)
+    - Instruction category (e.g. arithmetic, bitwise etc.)
+- Displays information for each intrinsic such as:
+    - Intrinsic form
+    - Assembly instruction
+    - Required include header
+    - Required CPUID support
+    - Instruction description
+    - Instruction operation pseudo code
+- Displays performance measurements such as:
+    - Latency
+    - Throughput
+    - uops
+    - Port usage
+- Offline use: Data is directly scraped from the online sources on first run and cached for future use.
+- Periodic data update checks (as well as manual)
 
-# Header 1
-## Header 2
-### Header 3
+## Downloads
 
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Sibras/ShiftIntrinsicGuide/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Pre-built executables are available from the [releases](https://github.com/ShiftIntrinsicGuide/releases) page in a single archive.
