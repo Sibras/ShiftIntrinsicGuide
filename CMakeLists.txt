@@ -48,6 +48,9 @@ if(WIN32)
 set_target_properties(ShiftIntrinsicGuide PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
+target_sources(ShiftIntrinsicGuide PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/Resources.rc"
+)
 elseif(APPLE)
 set_target_properties(ShiftIntrinsicGuide PROPERTIES
     MACOSX_BUNDLE TRUE
@@ -78,6 +81,7 @@ target_sources(ShiftIntrinsicGuide PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/source/MeasurementModel.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/Downloader.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/DataProvider.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/Resources.qrc"
 )
 
 target_compile_features(ShiftIntrinsicGuide

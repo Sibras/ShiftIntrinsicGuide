@@ -20,6 +20,7 @@
 #include "MeasurementModel.h"
 #include "Version.h"
 
+#include <QIcon>
 #include <QQmlContext>
 
 Application::Application(int argc, char* argv[], QObject* parent) noexcept
@@ -43,6 +44,8 @@ Application::~Application() noexcept
 
 int Application::run() noexcept
 {
+    app.setWindowIcon(QIcon(":/icon.ico"));
+
     // Register the GUI data model
     engine.rootContext()->setContextProperty("application", this);
     engine.rootContext()->setContextProperty("intrinsicsModel", &intrinsicsModel);
