@@ -89,10 +89,11 @@ void IntrinsicProxyModel::load(const QList<StringChecked>& technologies, const Q
     const QList<StringChecked>& categories) noexcept
 {
     // Copy in data
+    beginResetModel();
     allTechnologies = &technologies;
     allTypes = &types;
     allCategories = &categories;
-    invalidateFilter();
+    endResetModel();
 }
 
 void IntrinsicProxyModel::filterUpdated()
@@ -125,6 +126,7 @@ void IntrinsicProxyModel::filterUpdated()
 
 void IntrinsicProxyModel::setFilterExpression(const QString& filter)
 {
+    beginResetModel();
     search = filter;
-    invalidateFilter();
+    endResetModel();
 }
