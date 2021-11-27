@@ -23,7 +23,9 @@ ListView {
         ListView.onPooled: state = 'collapsed'
         ListView.onReused: intrinsicExpanded ? state = 'expanded' : state = 'collapsed';
         contentItem: ColumnLayout {
+            id: intrinsicItem
             spacing: 0
+            Layout.fillWidth: true
             Rectangle {
                 height: 1
                 Layout.preferredWidth: parent.width
@@ -32,6 +34,9 @@ ListView {
             }
             RowLayout {
                 spacing: 0
+                Layout.preferredWidth: parent.width
+                Layout.minimumWidth: Layout.preferredWidth
+                Layout.maximumWidth: Layout.preferredWidth
                 Rectangle {
                     color: catColours[intrinsicTechnology]
                     width: 15
@@ -65,6 +70,7 @@ ListView {
                     id: intrinDetails
                     Layout.preferredHeight: intrinDetailsSub.implicitHeight
                     Layout.maximumHeight: Layout.preferredHeight
+                    width: intrinsicItem.width
                     clip: true
                     Rectangle {
                         width: 1
