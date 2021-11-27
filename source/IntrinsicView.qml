@@ -8,7 +8,6 @@ ListView {
     boundsBehavior: Flickable.StopAtBounds
     model: intrinsicProxyModel
     clip: true
-    maximumFlickVelocity: 1000
     reuseItems: true
 
     delegate: ItemDelegate {
