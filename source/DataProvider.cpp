@@ -406,6 +406,10 @@ bool DataProvider::create() noexcept
                                                         if (latencyTrue != UINT_MAX) {
                                                             latency = latencyTrue;
                                                         }
+                                                        // Fix if only memory latency is provided
+                                                        if (latency == UINT_MAX) {
+                                                            std::swap(latency, latencyMemory);
+                                                        }
 
                                                         // Add to list
                                                         measurements.emplaceBack(std::move(archPretty), latency,
@@ -573,6 +577,7 @@ bool DataProvider::create() noexcept
 
     std::sort(data.instructions.begin(), data.instructions.end());
 
+#ifndef _DEBUG
     // Delete old cache
     if (QFile file(intrinFile); file.exists()) {
         file.remove();
@@ -580,6 +585,7 @@ bool DataProvider::create() noexcept
     if (QFile file(uopsFile); file.exists()) {
         file.remove();
     }
+#endif
 
     return true;
 }
