@@ -57,7 +57,9 @@ QVariant IntrinsicModel::data(const QModelIndex& index, const int role) const no
             case IntrinsicRoleInstruction:
                 return instructions.at(index.row()).instruction;
             case IntrinsicRoleMeasurements:
-                return QVariant::fromValue(reinterpret_cast<QObject*>(instructions.at(index.row()).measurements.get()));
+                return QVariant::fromValue(static_cast<QObject*>(instructions.at(index.row()).measurements.get()));
+            case IntrinsicRoleExpanded:
+                return instructions.at(index.row()).expanded;
             default:
                 break;
         }
@@ -73,13 +75,30 @@ QHash<int, QByteArray> IntrinsicModel::roleNames() const noexcept
         {IntrinsicRoleCPUIDText, "intrinsicCPUIDText"}, {IntrinsicRoleTypesText, "intrinsicTypesText"},
         {IntrinsicRoleCategoriesText, "intrinsicCategoriesText"}, {IntrinsicRoleTechnology, "intrinsicTechnology"},
         {IntrinsicRoleTypes, "intrinsicTypes"}, {IntrinsicRoleCategories, "intrinsicCategories"},
-        {IntrinsicRoleInstruction, "intrinsicInstruction"}, {IntrinsicRoleMeasurements, "intrinsicMeasurements"}};
+        {IntrinsicRoleInstruction, "intrinsicInstruction"}, {IntrinsicRoleMeasurements, "intrinsicMeasurements"},
+        {IntrinsicRoleExpanded, "intrinsicExpanded"}};
     return roles;
 }
 
 Qt::ItemFlags IntrinsicModel::flags(const QModelIndex& /*index*/) const noexcept
 {
     return Qt::NoItemFlags;
+}
+
+bool IntrinsicModel::setData(const QModelIndex& index, const QVariant& value, const int role) noexcept
+{
+    if (index.row() < instructions.count()) {
+        if (role == IntrinsicRoleExpanded) {
+            // Update the value
+            instructions[index.row()].expanded = value.toBool();
+            emit dataChanged(index, index, {role});
+            return true;
+        }
+        // This is not allowed
+        QByteArray data(roleNames()[role]);
+        qDebug() << "UI Tried to update intrinsic item: " << data.data();
+    }
+    return false;
 }
 
 void IntrinsicModel::load(QList<InstructionIndexed>& data) noexcept

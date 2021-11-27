@@ -17,8 +17,12 @@ ListView {
         bottomPadding: 6
         leftPadding: 6
         topPadding: 6
-        onClicked: state == 'collapsed' ? state = 'expanded' : state = 'collapsed';
+        onClicked: {
+            state == 'collapsed' ? state = 'expanded' : state = 'collapsed';
+            state == 'collapsed' ? intrinsicExpanded = false : intrinsicExpanded = true;
+        }
         ListView.onPooled: state = 'collapsed'
+        ListView.onReused: intrinsicExpanded ? state = 'expanded' : state = 'collapsed';
         contentItem: ColumnLayout {
             spacing: 0
             Rectangle {

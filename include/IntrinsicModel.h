@@ -52,6 +52,7 @@ private:
     QList<uint32_t> categories; /**< The category of operation (e.g. Arithmetic etc.). Indexes into allCategories */
     QString instruction;        /**< The intrinsics assembly equivalent */
     std::shared_ptr<MeasurementModel> measurements; /**< The list of measurements */
+    bool expanded = false;                          /**< Buffer use to cache Qt expanded/collapsed state */
 };
 
 Q_DECLARE_METATYPE(InstructionModeled);
@@ -83,7 +84,8 @@ public:
         IntrinsicRoleTypes,
         IntrinsicRoleCategories,
         IntrinsicRoleInstruction,
-        IntrinsicRoleMeasurements
+        IntrinsicRoleMeasurements,
+        IntrinsicRoleExpanded
     };
 
     Q_ENUM(IntrinsicRole)
@@ -128,6 +130,16 @@ public:
      * @return The flags.
      */
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
+
+    /**
+     * Updates the value of a specific list element.
+     * @note Used Automatically by Qt to set a value should the user change it in the UI.
+     * @param index Zero-based index of the list item in the model.
+     * @param value The new value.
+     * @param role  The role to set (This controls what data element is updated).
+     * @return True if it succeeds, false if it fails.
+     */
+    bool setData(const QModelIndex& index, const QVariant& value, int role) noexcept override;
 
     /**
      * Loads this model.
