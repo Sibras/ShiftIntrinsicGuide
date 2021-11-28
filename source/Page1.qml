@@ -143,23 +143,24 @@ Item {
         anchors.rightMargin: 15
         visible: application.progress === 1
         Label {
-            text: "Version: " + application.version + " (Data Version: "
+            id: versionLabel
+            text: "Version: " + application.version + " (Data Version: " + application.dataVersion
             rightPadding: 0
             leftPadding: 0
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignRight
         }
-        Label {
-            text: application.dataVersion
+        Button {            
             rightPadding: 0
             leftPadding: 0
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignRight
-            font.underline: true
-            MouseArea {
-                anchors.fill: parent
-                onDoubleClicked: application.resetData()
-            }
+            width: versionLabel.height
+            height: versionLabel.height
+            icon.source: "qrc:/refresh.png"
+            icon.color: "transparent"
+            flat: true
+            onDoubleClicked: application.resetData()
+            ToolTip.visible: down
+            ToolTip.text: "Double click to force reloading data from the internet"
         }
         Label {
             text: ")"
