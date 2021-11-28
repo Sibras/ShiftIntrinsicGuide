@@ -21,7 +21,7 @@
 
 #include <QDateTime>
 
-constexpr uint32_t fileVersion = 0x010901;
+constexpr uint32_t fileVersion = 0x010902;
 constexpr uint32_t fileID = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
