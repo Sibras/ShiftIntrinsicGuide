@@ -237,7 +237,7 @@ ListView {
                                     anchors.right: tableView.left
                                     anchors.top: tableView.top
                                     leftMargin: 150
-                                    width: 100
+                                    width: 110
                                 }
                                 TableView {
                                     id: tableView

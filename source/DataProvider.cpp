@@ -170,7 +170,7 @@ bool DataProvider::create() noexcept
         {"WSM", "Westmere"}, {"SNB", "Sandy Bridge"}, {"IVB", "Ivy Bridge"}, {"HSW", "Haswell"}, {"BDW", "Broadwell"},
         {"SKL", "Skylake"}, {"SKX", "Skylake-X"}, {"KBL", "Kaby Lake"}, {"CFL", "Coffee Lake"}, {"CNL", "Cannon Lake"},
         {"CLX", "Cascade Lake"}, {"ICL", "Ice Lake"}, {"TGL", "Tiger Lake"}, {"RKL", "Rocket Lake"}, {"ZEN+", "Zen+"},
-        {"ZEN2", "Zen2"}, {"ZEN3", "Zen3"}};
+        {"ZEN2", "Zen2"}, {"ZEN3", "Zen3"}, {"ADL-P", "Alder Lake (P-Core)"}, {"ADL-E", "Alder Lake (E-Core)"}};
 
     QList<Instruction> instructions;
 
