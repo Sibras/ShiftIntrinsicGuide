@@ -74,7 +74,10 @@ QVariant MeasurementModel::data(const QModelIndex& index, const int role) const 
             case 0: {
                 if (const auto item = measurements.at(index.row());
                     item.latency == item.latencyMem || item.latencyMem == UINT_MAX) {
-                    return QString::number(measurements.at(index.row()).latency);
+                    if (item.latency != UINT_MAX) {
+                        return QString::number(measurements.at(index.row()).latency);
+                    }
+                    return QString();
                 } else {
                     QString ret('[');
                     ret += QString::number(measurements.at(index.row()).latency);
