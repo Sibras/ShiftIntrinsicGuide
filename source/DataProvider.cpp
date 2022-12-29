@@ -21,7 +21,7 @@
 
 #include <QDateTime>
 
-constexpr uint32_t fileVersion = 0x010902;
+constexpr uint32_t fileVersion = 0x011000;
 constexpr uint32_t fileID = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
@@ -170,7 +170,9 @@ bool DataProvider::create() noexcept
         {"WSM", "Westmere"}, {"SNB", "Sandy Bridge"}, {"IVB", "Ivy Bridge"}, {"HSW", "Haswell"}, {"BDW", "Broadwell"},
         {"SKL", "Skylake"}, {"SKX", "Skylake-X"}, {"KBL", "Kaby Lake"}, {"CFL", "Coffee Lake"}, {"CNL", "Cannon Lake"},
         {"CLX", "Cascade Lake"}, {"ICL", "Ice Lake"}, {"TGL", "Tiger Lake"}, {"RKL", "Rocket Lake"}, {"ZEN+", "Zen+"},
-        {"ZEN2", "Zen2"}, {"ZEN3", "Zen3"}, {"ADL-P", "Alder Lake (P-Core)"}, {"ADL-E", "Alder Lake (E-Core)"}};
+        {"ZEN2", "Zen2"}, {"ZEN3", "Zen3"}, {"ZEN4", "Zen4"}, {"ADL-P", "Alder Lake (P-Core)"},
+        {"ADL-E", "Alder Lake (E-Core)"}, {"BNL", "Bonnell"}, {"AMT", "Airmont"}, {"GLM", "Goldmont"},
+        {"GLP", "Goldmont+"}, {"TRM", "Tremont"}};
 
     QList<Instruction> instructions;
 
