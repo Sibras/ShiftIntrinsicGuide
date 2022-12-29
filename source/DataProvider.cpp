@@ -189,8 +189,8 @@ bool DataProvider::create() noexcept
             // header: is the header file the intrinsic is declared in.
             QString tech = node.attribute("tech", "Unknown");
             QString name = node.attribute("name");
-            QList<QString> types, cpuids, categories;
-            QString description, operation, header, instruction, xed;
+            QList<QString> types, cpuids, categories, xeds;
+            QString description, operation, header, instruction;
             QString returnParam, returnName;
             QList<QPair<QString, QString>> parameters;
             if (name.isEmpty()) {
@@ -296,14 +296,9 @@ bool DataProvider::create() noexcept
                         }
                     } else if (childE.tagName() == "instruction") {
                         // Has attributes xed, form, name
-                        if (!xed.isEmpty()) {
-                            // Can have multiple xed`s if intrinsic can map to different instructions
-#ifdef _DEBUG
-                            qDebug() << "Intrinsic has multiple xeds: " + name + ", xed: " + xed;
-#endif
-                        } else {
-                            // Always take the first instruction form
-                            xed = childE.attribute("xed", "");
+                        QString xed = childE.attribute("xed", "");
+                        if (!xed.isEmpty() && !xeds.contains(xed)) {
+                            xeds.emplaceBack(std::move(xed));
                         }
                         if (!instruction.isEmpty()) {
                             instruction += ',';
@@ -326,7 +321,7 @@ bool DataProvider::create() noexcept
 
             // Get corresponding value from uops
             QList<Measurements> measurements;
-            if (!xed.isEmpty()) {
+            if (!xeds.isEmpty()) {
                 // uops info stores instructions by extension name (cpuid)
                 bool found = false;
                 bool secondLoop = false;
@@ -351,82 +346,89 @@ bool DataProvider::create() noexcept
                             if (secondLoop || elem.attribute("name").startsWith(cpuid)) {
                                 // Search for element containing required xed
                                 for (auto child = elem.firstChild(); !child.isNull(); child = child.nextSibling()) {
-                                    if (auto childE = child.toElement(); !childE.isNull() &&
-                                        childE.tagName() == "instruction" && childE.attribute("iform") == xed) {
-                                        found = true;
-                                        for (auto child2 = child.firstChild(); !child2.isNull();
-                                             child2 = child2.nextSibling()) {
-                                            if (auto child2E = child2.toElement();
-                                                !child2E.isNull() && child2E.tagName() == "architecture") {
-                                                QString arch = child2E.attribute("name");
-                                                QString archPretty =
-                                                    archsPretty.contains(arch) ? archsPretty[arch] : std::move(arch);
-                                                for (auto child3 = child2.firstChild(); !child3.isNull();
-                                                     child3 = child3.nextSibling()) {
-                                                    if (auto child3E = child3.toElement();
-                                                        !child3E.isNull() && child3E.tagName() == "measurement") {
-                                                        uint32_t uops = child3E.attribute("uops").toUInt();
-                                                        QString ports = child3E.attribute("ports");
+                                    for (const auto& xed : xeds) {
+                                        if (auto childE = child.toElement(); !found && !childE.isNull() &&
+                                            childE.tagName() == "instruction" && childE.attribute("iform") == xed) {
+                                            found = true;
+                                            for (auto child2 = child.firstChild(); !child2.isNull();
+                                                 child2 = child2.nextSibling()) {
+                                                if (auto child2E = child2.toElement();
+                                                    !child2E.isNull() && child2E.tagName() == "architecture") {
+                                                    QString arch = child2E.attribute("name");
+                                                    QString archPretty = archsPretty.contains(arch) ?
+                                                        archsPretty[arch] :
+                                                        std::move(arch);
+                                                    for (auto child3 = child2.firstChild(); !child3.isNull();
+                                                         child3 = child3.nextSibling()) {
+                                                        if (auto child3E = child3.toElement();
+                                                            !child3E.isNull() && child3E.tagName() == "measurement") {
+                                                            uint32_t uops = child3E.attribute("uops").toUInt();
+                                                            QString ports = child3E.attribute("ports");
 
-                                                        float throughput = (child3E.hasAttribute("TP")) ?
-                                                            child3E.attribute("TP").toFloat() :
-                                                            child3E.attribute("TP_unrolled").toFloat();
+                                                            float throughput = (child3E.hasAttribute("TP")) ?
+                                                                child3E.attribute("TP").toFloat() :
+                                                                child3E.attribute("TP_unrolled").toFloat();
 
-                                                        // Calculate latency
-                                                        uint32_t latency = UINT_MAX;
-                                                        uint32_t latencyTrue = UINT_MAX;
-                                                        uint32_t latencyMemory =
-                                                            UINT_MAX; // Additional latency associated
-                                                                      // with using a memory address
-                                                        for (auto child4 = child3.firstChild(); !child4.isNull();
-                                                             child4 = child4.nextSibling()) {
-                                                            if (auto child4E = child4.toElement();
-                                                                !child4E.isNull() && child4E.tagName() == "latency") {
-                                                                if (child4E.hasAttribute("cycles")) {
-                                                                    if (child4E.attribute("target_op").toUInt() == 1 &&
-                                                                        child4E.attribute("start_op").toUInt() == 1 &&
-                                                                        child4E.attribute("cycles").toUInt() > 0) {
-                                                                        latencyTrue =
-                                                                            child4E.attribute("cycles").toUInt();
-                                                                    } else {
-                                                                        latency =
-                                                                            std::max(latency == UINT_MAX ? 0 : latency,
+                                                            // Calculate latency
+                                                            uint32_t latency = UINT_MAX;
+                                                            uint32_t latencyTrue = UINT_MAX;
+                                                            uint32_t latencyMemory =
+                                                                UINT_MAX; // Additional latency associated
+                                                                          // with using a memory address
+                                                            for (auto child4 = child3.firstChild(); !child4.isNull();
+                                                                 child4 = child4.nextSibling()) {
+                                                                if (auto child4E = child4.toElement();
+                                                                    !child4E.isNull() &&
+                                                                    child4E.tagName() == "latency") {
+                                                                    if (child4E.hasAttribute("cycles")) {
+                                                                        if (child4E.attribute("target_op").toUInt() ==
+                                                                                1 &&
+                                                                            child4E.attribute("start_op").toUInt() ==
+                                                                                1 &&
+                                                                            child4E.attribute("cycles").toUInt() > 0) {
+                                                                            latencyTrue =
+                                                                                child4E.attribute("cycles").toUInt();
+                                                                        } else {
+                                                                            latency = std::max(
+                                                                                latency == UINT_MAX ? 0 : latency,
                                                                                 child4E.attribute("cycles").toUInt());
+                                                                        }
+                                                                    } else if (child4E.hasAttribute("cycles_mem")) {
+                                                                        latencyMemory = std::max(
+                                                                            latencyMemory == UINT_MAX ? 0 :
+                                                                                                        latencyMemory,
+                                                                            child4E.attribute("cycles_mem").toUInt());
+                                                                        latencyMemory = std::max(latencyMemory,
+                                                                            child4E.attribute("cycles_addr").toUInt());
                                                                     }
-                                                                } else if (child4E.hasAttribute("cycles_mem")) {
-                                                                    latencyMemory = std::max(
-                                                                        latencyMemory == UINT_MAX ? 0 : latencyMemory,
-                                                                        child4E.attribute("cycles_mem").toUInt());
-                                                                    latencyMemory = std::max(latencyMemory,
-                                                                        child4E.attribute("cycles_addr").toUInt());
                                                                 }
                                                             }
-                                                        }
 
-                                                        // Fix latency for cases when different operand ordering
-                                                        // resulted in different results
-                                                        if (latencyTrue != UINT_MAX) {
-                                                            latency = latencyTrue;
-                                                        }
-                                                        // Fix if only memory latency is provided
-                                                        if (latency == UINT_MAX) {
-                                                            std::swap(latency, latencyMemory);
-                                                        }
+                                                            // Fix latency for cases when different operand ordering
+                                                            // resulted in different results
+                                                            if (latencyTrue != UINT_MAX) {
+                                                                latency = latencyTrue;
+                                                            }
+                                                            // Fix if only memory latency is provided
+                                                            if (latency == UINT_MAX) {
+                                                                std::swap(latency, latencyMemory);
+                                                            }
 
-                                                        // Add to list
-                                                        measurements.emplaceBack(std::move(archPretty), latency,
-                                                            latencyMemory, throughput, uops, std::move(ports));
-                                                        break;
+                                                            // Add to list
+                                                            measurements.emplaceBack(std::move(archPretty), latency,
+                                                                latencyMemory, throughput, uops, std::move(ports));
+                                                            break;
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
 
-                                        // Check if shutdown has been called
-                                        if (parentApp->getLoaded()) {
-                                            return false;
+                                            // Check if shutdown has been called
+                                            if (parentApp->getLoaded()) {
+                                                return false;
+                                            }
+                                            break;
                                         }
-                                        break;
                                     }
                                 }
                             }
@@ -440,7 +442,14 @@ bool DataProvider::create() noexcept
                 }
 #ifdef _DEBUG
                 if (!found) {
-                    qDebug() << "Intrinsic uops data not found: " + name + ", xed: " + xed;
+                    QString xedString;
+                    for (const auto& xed : xeds) {
+                        if (!xedString.isEmpty()) {
+                            xedString += '|';
+                        }
+                        xedString += xed;
+                    }
+                    qDebug() << "Intrinsic uops data not found: " + name + ", xed: " + xedString;
                 }
 #endif
             } else {
