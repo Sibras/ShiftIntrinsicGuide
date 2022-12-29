@@ -474,6 +474,20 @@ bool DataProvider::create() noexcept
 #endif
             }
 
+            // Check if has a valid technology (added in newer version of intrinsic format)
+            // TODO: Add tree structure by combining techs with cpuid sub tree
+            if (tech.contains("_ALL")) {
+#ifdef _DEBUG
+                if (cpuids.length() != 1) {
+                    qDebug() << "Intrinsic technology value did not map to single cpuid: " + name;
+                }
+#endif
+                tech = cpuids[0];
+            }
+            if (tech.startsWith("AVX_")) {
+                tech = "Other";
+            }
+
             // Add to list of known techs/types
             if (!data.allTechnologies.contains(tech)) {
                 data.allTechnologies.append(tech);
