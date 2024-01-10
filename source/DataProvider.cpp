@@ -151,8 +151,8 @@ bool DataProvider::create() noexcept
     // Scan through intrinsic data for each function
     QDomElement root = dataXMLIntel.documentElement();
     QDomElement root2 = dataXMLOps.documentElement();
-    data.version = root.attribute("version", "3.6.0");
-    data.date = QDate::fromString(root.attribute("date", "06/30/2021"), "MM/dd/yyyy");
+    data.version = root.attribute("version", "3.6.7");
+    data.date = QDate::fromString(root.attribute("date", "07/12/2023"), "MM/dd/yyyy");
 #ifdef _DEBUG
     if (!data.date.isValid()) {
         qDebug() << "Invalid source date detected for data:" << root.attribute("date", "06/30/2021");
