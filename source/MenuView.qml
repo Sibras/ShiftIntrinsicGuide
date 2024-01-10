@@ -27,7 +27,7 @@ Row {
                 horizontalAlignment: Text.AlignLeft
                 textFormat: Text.StyledText
                 topPadding: 6
-                bottomPadding: -15
+                bottomPadding: 5
             }
 
             Repeater {
@@ -78,7 +78,7 @@ Row {
                 horizontalAlignment: Text.AlignLeft
                 textFormat: Text.StyledText
                 topPadding: 10
-                bottomPadding: -15
+                bottomPadding: 5
             }
             Repeater {
                 model: typesModel
@@ -121,7 +121,7 @@ Row {
                 horizontalAlignment: Text.AlignLeft
                 textFormat: Text.StyledText
                 topPadding: 10
-                bottomPadding: -15
+                bottomPadding: 5
             }
             Repeater {
                 model: categoriesModel

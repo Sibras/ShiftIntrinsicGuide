@@ -88,7 +88,7 @@ ListView {
                             textFormat: Text.StyledText
                             leftPadding: 20
                             topPadding: 6
-                            bottomPadding: -15
+                            bottomPadding: 0
                         }
                         Row {
                             Label {
@@ -177,7 +177,7 @@ ListView {
                             textFormat: Text.StyledText
                             leftPadding: 20
                             topPadding: 6
-                            bottomPadding: -15
+                            bottomPadding: 0
                         }
                         Label {
                             text: intrinsicDescription
@@ -196,7 +196,7 @@ ListView {
                             textFormat: Text.StyledText
                             leftPadding: 20
                             topPadding: 6
-                            bottomPadding: -15
+                            bottomPadding: 0
                             visible: intrinsicOperation.length !== 0
                         }
                         Label {
@@ -236,8 +236,8 @@ ListView {
                                     syncView: tableView
                                     anchors.right: tableView.left
                                     anchors.top: tableView.top
-                                    leftMargin: 150
-                                    width: 110
+                                    leftMargin: 180
+                                    width: 150
                                 }
                                 TableView {
                                     id: tableView
