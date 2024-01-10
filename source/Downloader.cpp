@@ -38,7 +38,11 @@ Downloader::~Downloader() noexcept
 bool Downloader::get(const QUrl& url, QByteArray& retData) noexcept
 {
     QNetworkRequest request(url);
-    request.setRawHeader("User-Agent", "Mozilla Firefox");
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "text/html; charset=UTF-8");
+    request.setHeader(QNetworkRequest::UserAgentHeader,
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0");
+    request.setRawHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,/;q=0.8");
 
     QNetworkReply* reply = manager->get(request);
     connect(reply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
