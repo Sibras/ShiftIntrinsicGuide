@@ -108,6 +108,7 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" PREFIX "Source Files" REGULAR_EX
 
 qt_add_qml_module(ShiftIntrinsicGuide
     URI qml
+    RESOURCE_PREFIX /
     VERSION 1.0
     QML_FILES    
     "source/main.qml"
