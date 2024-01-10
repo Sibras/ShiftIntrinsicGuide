@@ -6,7 +6,7 @@ ShiftIntrinsicGuide
 [![license](https://img.shields.io/github/license/Sibras/ShiftIntrinsicGuide.svg)](https://github.com/Sibras/ShiftIntrinsicGuide)
 ## ShiftIntrinsicGuide
 
-ShiftIntrinsicGuide is a GUI for x86 intrinsic instruction information. It proveds a searchable list of all currently available intrinsic instructions and combines it with real-world latency/throughput measurements from a variet of different hardware architectures (Intel and AMD).
+ShiftIntrinsicGuide is a GUI for x86 intrinsic instruction information. It provides a searchable list of all currently available intrinsic instructions and combines it with real-world latency/throughput measurements from a variety of different hardware architectures (Intel and AMD).
 
 It combines data from the following sources:
 
