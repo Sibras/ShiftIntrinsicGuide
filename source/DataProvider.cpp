@@ -47,22 +47,22 @@ InternalData& DataProvider::getData() noexcept
 
 bool DataProvider::setup() noexcept
 {
-    bool fail = false;
+    bool success = true;
     // Load any existing cache from disk
     if (!load()) {
         // If no cache found then create new one
-        fail = !create();
-        if (!fail) {
+        success = create();
+        if (success) {
             // Backup created cache to disk
             (void)store();
         }
     }
 
-    if (!fail) {
+    if (success) {
         // Remove loading progress from parent
         parentApp->setProgress(1.0F);
     }
-    return true;
+    return success;
 }
 
 void DataProvider::clear()

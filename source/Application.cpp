@@ -126,20 +126,23 @@ QString Application::getOKDialogTitle() const noexcept
 
 void Application::acceptOKCallback() noexcept
 {
-    OKDialogData infoData;
-    {
-        QMutexLocker lock(&mutexOK);
-        // Call the callback function
-        infoData = queueOK.takeFirst();
-        // Check if there are more dialogs to be displayed
-        if (!queueOK.empty()) {
-            // If there are any pending OK dialogs they need to be re-enabled
-            emit notifyOKDialogTitleChanged();
-            emit hasOKDialogChanged();
-        }
+    QMutexLocker lock(&mutexOK);
+    // Call the callback function
+    if (queueOK.empty()) {
+        return;
     }
+    OKDialogData infoData = queueOK.takeFirst();
     if (infoData.callback != nullptr) {
         infoData.callback();
+    }
+    // Check if there are more dialogs to be displayed
+    if (!queueOK.empty()) {
+        // If there are any pending OK dialogs they need to be re-enabled
+        // Needs a timer to ensure it occurs after the current accept signal has completed
+        QTimer::singleShot(1, this, [this]() {
+            emit hasOKDialogChanged();
+            emit notifyOKDialogTitleChanged();
+        });
     }
 }
 
@@ -219,7 +222,9 @@ void Application::setupData() noexcept
         setProgress(1.0F);
         setLoaded(true);
     } else {
+        setProgress(0.0F);
         setLoaded(true);
-        addOKDialog("Failed to get intrinsic data", [] {});
+        setLoadingTitle("Failed to get intrinsic data");
+        addOKDialog("Failed to get intrinsic data", [] { QGuiApplication::exit(); });     
     }
 }

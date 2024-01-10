@@ -30,6 +30,7 @@ ApplicationWindow {
         height: infoDialog.height
         Dialog {
             id: infoDialog
+            modal: true
             title: application.OKDialogTitle
             visible: application.hasOKDialog
 
