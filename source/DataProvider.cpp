@@ -159,24 +159,60 @@ bool DataProvider::create() noexcept
     }
 #endif
 
-    const QMap<QString, QString> typesPretty = {{"BF16", "BFloat16"}, {"FP16", "Float16 (half)"},
-        {"FP32", "Float32 (float)"}, {"FP64", "Float64 (double)"}, {"MASK", "Mask"},
-        {"SI16", "Integer Signed 16 (int16)"}, {"SI32", "Integer Signed 32 (int32)"},
-        {"SI64", "Integer Signed 64 (int64)"}, {"SI8", "Integer Signed 8 (int8)"},
-        {"UI16", "Integer Unsigned 16 (uint16)"}, {"UI32", "Integer Unsigned 32 (uint32)"},
-        {"UI64", "Integer Unsigned 64 (uint64)"}, {"UI8", "Integer Unsigned 8 (uint8)"}};
+    const QMap<QString, QString> typesPretty = {
+        {"BF16",                     "BFloat16"},
+        {"FP16",               "Float16 (half)"},
+        {"FP32",              "Float32 (float)"},
+        {"FP64",             "Float64 (double)"},
+        {"MASK",                         "Mask"},
+        {"SI16",    "Integer Signed 16 (int16)"},
+        {"SI32",    "Integer Signed 32 (int32)"},
+        {"SI64",    "Integer Signed 64 (int64)"},
+        { "SI8",      "Integer Signed 8 (int8)"},
+        {"UI16", "Integer Unsigned 16 (uint16)"},
+        {"UI32", "Integer Unsigned 32 (uint32)"},
+        {"UI64", "Integer Unsigned 64 (uint64)"},
+        { "UI8",   "Integer Unsigned 8 (uint8)"}
+    };
 
-    const QMap<QString, QString> archsPretty = {{"CON", "Conroe"}, {"WOL", "Wolfdale"}, {"NHM", "Nehalem"},
-        {"WSM", "Westmere"}, {"SNB", "Sandy Bridge"}, {"IVB", "Ivy Bridge"}, {"HSW", "Haswell"}, {"BDW", "Broadwell"},
-        {"SKL", "Skylake"}, {"SKX", "Skylake-X"}, {"KBL", "Kaby Lake"}, {"CFL", "Coffee Lake"}, {"CNL", "Cannon Lake"},
-        {"CLX", "Cascade Lake"}, {"ICL", "Ice Lake"}, {"TGL", "Tiger Lake"}, {"RKL", "Rocket Lake"}, {"ZEN+", "Zen+"},
-        {"ZEN2", "Zen2"}, {"ZEN3", "Zen3"}, {"ZEN4", "Zen4"}, {"ADL-P", "Alder Lake (P-Core)"},
-        {"ADL-E", "Alder Lake (E-Core)"}, {"BNL", "Bonnell"}, {"AMT", "Airmont"}, {"GLM", "Goldmont"},
-        {"GLP", "Goldmont+"}, {"TRM", "Tremont"}};
+    const QMap<QString, QString> archsPretty = {
+        {  "CON",              "Conroe"},
+        {  "WOL",            "Wolfdale"},
+        {  "NHM",             "Nehalem"},
+        {  "WSM",            "Westmere"},
+        {  "SNB",        "Sandy Bridge"},
+        {  "IVB",          "Ivy Bridge"},
+        {  "HSW",             "Haswell"},
+        {  "BDW",           "Broadwell"},
+        {  "SKL",             "Skylake"},
+        {  "SKX",           "Skylake-X"},
+        {  "KBL",           "Kaby Lake"},
+        {  "CFL",         "Coffee Lake"},
+        {  "CNL",         "Cannon Lake"},
+        {  "CLX",        "Cascade Lake"},
+        {  "ICL",            "Ice Lake"},
+        {  "TGL",          "Tiger Lake"},
+        {  "RKL",         "Rocket Lake"},
+        { "ZEN+",                "Zen+"},
+        { "ZEN2",                "Zen2"},
+        { "ZEN3",                "Zen3"},
+        { "ZEN4",                "Zen4"},
+        { "ZEN5",                "Zen5"},
+        {"ADL-P", "Alder Lake (P-Core)"},
+        {"ADL-E", "Alder Lake (E-Core)"},
+        {  "BNL",             "Bonnell"},
+        {  "AMT",             "Airmont"},
+        {  "GLM",            "Goldmont"},
+        {  "GLP",           "Goldmont+"},
+        {  "TRM",             "Tremont"}
+    };
 
-    const QMap<QString, QString> xedConversions = {{"MASKMOVDQU_XMMdq_XMMdq", "MASKMOVDQU_XMMxub_XMMxub"},
-        {"MOVLPS_MEMq_XMMps", "MOVLPS_MEMq_XMMq"}, {"MOVQ_XMMdq_MEMq_0F6E", "MOVQ_XMMdq_MEMq_0F7E"},
-        {"MOVQ_MEMq_XMMq_0F7E", "MOVQ_MEMq_XMMq_0FD6"}};
+    const QMap<QString, QString> xedConversions = {
+        {"MASKMOVDQU_XMMdq_XMMdq", "MASKMOVDQU_XMMxub_XMMxub"},
+        {     "MOVLPS_MEMq_XMMps",         "MOVLPS_MEMq_XMMq"},
+        {  "MOVQ_XMMdq_MEMq_0F6E",     "MOVQ_XMMdq_MEMq_0F7E"},
+        {   "MOVQ_MEMq_XMMq_0F7E",      "MOVQ_MEMq_XMMq_0FD6"}
+    };
 
     QList<Instruction> instructions;
 
@@ -484,7 +520,7 @@ bool DataProvider::create() noexcept
 #endif
                 tech = cpuids[0];
             }
-            if (tech.startsWith("AVX_")) {
+            if (tech.startsWith("AVX_") || tech == "SHA512" || tech == "SM3" || tech == "SM4") {
                 tech = "Other";
             }
 
