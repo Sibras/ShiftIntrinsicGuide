@@ -85,8 +85,8 @@ NamespaceIndentation: None
 PackConstructorInitializers: Never
 PointerAlignment: Left
 PPIndentWidth: -1
-QualifierAlignment: Left
-QualifierOrder: ['inline', 'static', 'constexpr', 'const', 'volatile', 'type', 'restrict' ]
+QualifierAlignment: Custom
+QualifierOrder: [inline, static, constexpr, const, volatile, type, restrict]
 ReflowComments: true
 ReferenceAlignment: Left
 ShortNamespaceLines: 0
