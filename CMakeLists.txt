@@ -19,7 +19,7 @@ set(CMAKE_AUTORCC ON)
 
 project(ShiftIntrinsicGuide
     LANGUAGES CXX
-    VERSION 1.0.5
+    VERSION 1.0.6
     DESCRIPTION "A GUI for viewing x86 intrinsics and associated performance data"
 )
 
