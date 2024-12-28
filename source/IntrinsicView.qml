@@ -60,6 +60,8 @@ ListView {
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignRight
                     Layout.alignment: Qt.AlignRight
+                    Layout.maximumWidth: intrinsicItem.width / 4
+                    elide: Text.ElideRight
                     textFormat: Text.PlainText
                 }
             }
