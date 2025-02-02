@@ -26,14 +26,20 @@ ListView {
             id: intrinsicItem
             spacing: 0
             Layout.fillWidth: true
+            Layout.preferredWidth: parent.width
+            Layout.minimumWidth: Layout.preferredWidth
+            Layout.maximumWidth: Layout.preferredWidth
             Rectangle {
                 height: 1
+                Layout.fillWidth: true
                 Layout.preferredWidth: parent.width
                 Layout.minimumWidth: Layout.preferredWidth
+                Layout.maximumWidth: Layout.preferredWidth
                 color: catColours[intrinsicTechnology]
             }
             RowLayout {
                 spacing: 0
+                Layout.fillWidth: true
                 Layout.preferredWidth: parent.width
                 Layout.minimumWidth: Layout.preferredWidth
                 Layout.maximumWidth: Layout.preferredWidth
@@ -70,10 +76,12 @@ ListView {
                 RowLayout {
                     spacing: 0
                     id: intrinDetails
+                    Layout.fillHeight: true
                     Layout.preferredHeight: intrinDetailsSub.implicitHeight
                     Layout.maximumHeight: Layout.preferredHeight
-                    width: intrinsicItem.width
-                    clip: true
+                    Layout.preferredWidth: intrinsicItem.width
+                    Layout.minimumWidth: Layout.preferredWidth
+                    Layout.maximumWidth: Layout.preferredWidth
                     Rectangle {
                         width: 1
                         Layout.preferredHeight: parent.height
@@ -83,6 +91,10 @@ ListView {
                     ColumnLayout {
                         id: intrinDetailsSub
                         spacing: 0
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: intrinsicItem.width
+                        Layout.minimumWidth: Layout.preferredWidth
+                        Layout.maximumWidth: Layout.preferredWidth
                         Label {
                             text: "<h3>Synopsis</h3>"
                             verticalAlignment: Text.AlignVCenter
@@ -240,6 +252,10 @@ ListView {
                         ColumnLayout {
                             spacing: 0
                             visible: intrinsicMeasurements.rowCount() > 0
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width
+                            Layout.minimumWidth: Layout.preferredWidth
+                            Layout.maximumWidth: Layout.preferredWidth
                             Label {
                                 text: "<h3>Performance</h3>"
                                 verticalAlignment: Text.AlignVCenter
@@ -250,6 +266,9 @@ ListView {
                             }
                             Item {
                                 Layout.fillWidth: true
+                                Layout.preferredWidth: parent.width
+                                Layout.minimumWidth: Layout.preferredWidth
+                                Layout.maximumWidth: Layout.preferredWidth
                                 Layout.preferredHeight: 20 + verticalHeader.contentHeight + horizontalHeader.implicitHeight
                                 Layout.minimumHeight: Layout.preferredHeight
                                 HorizontalHeaderView {
