@@ -55,6 +55,7 @@ bool Downloader::get(const QUrl& url, QByteArray& retData) noexcept
         if (nullptr == reply) {
             // Error. we probably timed out i.e SIGNAL(finished()) did not happen
             // this handles above indicated case (1)
+            qCritical() << "Failed to download file: internal error";
         } else if (QNetworkReply::NoError != reply->error()) {
             qCritical() << "Failed to download file: " << reply->errorString();
             delete reply;
@@ -65,6 +66,9 @@ bool Downloader::get(const QUrl& url, QByteArray& retData) noexcept
             break;
         }
         --retries;
+        if (retries > 0) {
+            qCritical() << "Attempting to download file again";
+        }
     }
 
     if (callback != nullptr) {
