@@ -154,6 +154,7 @@ ListView {
                                 verticalAlignment: Text.AlignVCenter
                                 textFormat: Text.PlainText
                                 font.pointSize: Qt.application.font.pixelSize - 2
+                                visible: intrinsicInstruction.length !== 0
                             }
                             TextEdit {
                                 text: intrinsicInstruction
@@ -165,6 +166,7 @@ ListView {
                                 readOnly: true
                                 selectByMouse: true
                                 color: intrinNameLabel.color
+                                visible: intrinsicInstruction.length !== 0
                             }
                         }
                         Label {
