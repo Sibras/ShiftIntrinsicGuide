@@ -56,6 +56,7 @@ ListView {
                     verticalAlignment: Text.AlignVCenter
                     Layout.fillWidth: true
                     textFormat: Text.StyledText
+                    clip: true
                 }
                 Label {
                     text: intrinsicInstruction
@@ -76,21 +77,22 @@ ListView {
                 RowLayout {
                     spacing: 0
                     id: intrinDetails
-                    Layout.fillHeight: true
-                    Layout.preferredHeight: intrinDetailsSub.implicitHeight
-                    Layout.maximumHeight: Layout.preferredHeight
+                    Layout.fillWidth: true
                     Layout.preferredWidth: intrinsicItem.width
                     Layout.minimumWidth: Layout.preferredWidth
                     Layout.maximumWidth: Layout.preferredWidth
                     Rectangle {
                         width: 1
-                        Layout.preferredHeight: parent.height
+                        Layout.preferredHeight: intrinDetailsSub.height
                         Layout.minimumHeight: Layout.preferredHeight
+                        Layout.maximumHeight: Layout.preferredHeight
                         color: catColours[intrinsicTechnology]
                     }
                     ColumnLayout {
                         id: intrinDetailsSub
                         spacing: 0
+                        anchors.left: parent.left
+                        anchors.top: parent.top
                         Layout.fillWidth: true
                         Layout.preferredWidth: intrinsicItem.width
                         Layout.minimumWidth: Layout.preferredWidth
