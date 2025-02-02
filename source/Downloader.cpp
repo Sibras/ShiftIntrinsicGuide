@@ -44,28 +44,31 @@ bool Downloader::get(const QUrl& url, QByteArray& retData) noexcept
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0");
     request.setRawHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,/;q=0.8");
 
-    QNetworkReply* reply = manager->get(request);
-    connect(reply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
-    timer.start(10000); // 10000ms wait for reply
-    loop.exec();
+    uint32_t retries = 3;
+    bool fail = true;
+    while (retries != 0) {
+        QNetworkReply* reply = manager->get(request);
+        connect(reply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
+        timer.start(10000); // 10000ms wait for reply
+        loop.exec();
 
-    bool fail = false;
-    if (nullptr == reply) {
-        // Error. we probably timed out i.e SIGNAL(finished()) did not happen
-        // this handles above indicated case (1)
-        fail = true;
-    } else if (QNetworkReply::NoError != reply->error()) {
-        qCritical() << "Failed to download file: " << reply->errorString();
-        fail = true;
-    } else {
-        retData = reply->readAll();
+        if (nullptr == reply) {
+            // Error. we probably timed out i.e SIGNAL(finished()) did not happen
+            // this handles above indicated case (1)
+        } else if (QNetworkReply::NoError != reply->error()) {
+            qCritical() << "Failed to download file: " << reply->errorString();
+            delete reply;
+        } else {
+            retData = reply->readAll();
+            delete reply;
+            fail = false;
+            break;
+        }
+        --retries;
     }
 
     if (callback != nullptr) {
         callback(1.0f);
-    }
-    if (reply) {
-        delete reply;
     }
     return !fail;
 }
