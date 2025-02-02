@@ -89,18 +89,18 @@ bool DataProvider::load() noexcept
         uint32_t check = 0;
         in >> check;
         if (check != fileID) {
-            qWarning() << "File load had invalid identifier";
+            qWarning() << "Cached data file had invalid identifier";
             return false;
         }
         in >> check;
         if (check != fileVersion) {
-            qInfo() << "File version to old, creating new one";
+            qInfo() << "Cached data version is to old, recreating from upstream sources";
             return false;
         }
-        in.setVersion(QDataStream::Qt_6_2);
+        in.setVersion(QDataStream::Qt_6_8);
         in >> data.date;
         if (QDateTime(data.date, QTime::currentTime()).daysTo(QDateTime::currentDateTime()) > 180) {
-            qInfo() << "File data is to old, creating new one";
+            qInfo() << "Cached data is to old, recreating from upstream sources";
             return false;
         }
         in >> data;
@@ -119,7 +119,7 @@ bool DataProvider::store() noexcept
         QDataStream out(&fileCache);
         out << fileID;
         out << fileVersion;
-        out.setVersion(QDataStream::Qt_6_2);
+        out.setVersion(QDataStream::Qt_6_8);
         out << data.date;
         out << data;
         addProgress(1.0F);
@@ -152,12 +152,18 @@ bool DataProvider::create() noexcept
     QDomElement root = dataXMLIntel.documentElement();
     QDomElement root2 = dataXMLOps.documentElement();
     data.version = root.attribute("version", "3.6.7");
-    data.date = QDate::fromString(root.attribute("date", "07/12/2023"), "MM/dd/yyyy");
+    QDate currentDate = QDate::currentDate();
+    data.date = QDate::fromString(root.attribute("date", currentDate.toString()), "MM/dd/yyyy");
 #ifdef _DEBUG
     if (!data.date.isValid()) {
-        qDebug() << "Invalid source date detected for data:" << root.attribute("date", "06/30/2021");
+        qDebug() << "Invalid source date detected for intrinsic guide data:" << root.attribute("date", currentDate.toString());
+        data.date = currentDate;
     }
 #endif
+    if (QDateTime(data.date, QTime::currentTime()).daysTo(QDateTime::currentDateTime()) > 180) {
+        qInfo() << "Upstream intrinsic guide data has not been updated in over 180 days. Setting cache date to current date";
+        data.date = currentDate;
+    }
 
     const QMap<QString, QString> typesPretty = {
         {"BF16",                     "BFloat16"},
