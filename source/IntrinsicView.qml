@@ -20,7 +20,7 @@ ListView {
             state == 'collapsed' ? state = 'expanded' : state = 'collapsed';
             state == 'collapsed' ? intrinsicExpanded = false : intrinsicExpanded = true;
         }
-        ListView.onPooled: state = 'collapsed'
+        ListView.onPooled: intrinsicExpanded ? state = 'expanded' : state = 'collapsed';
         ListView.onReused: intrinsicExpanded ? state = 'expanded' : state = 'collapsed';
         contentItem: ColumnLayout {
             id: intrinsicItem
