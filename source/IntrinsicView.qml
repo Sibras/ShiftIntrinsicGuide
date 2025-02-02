@@ -145,6 +145,28 @@ ListView {
                                 font.pointSize: Qt.application.font.pixelSize - 2
                             }
                         }
+                        Row {
+                            Label {
+                                text: "Instruction: "
+                                leftPadding: 30
+                                topPadding: 0
+                                bottomPadding: 0
+                                verticalAlignment: Text.AlignVCenter
+                                textFormat: Text.PlainText
+                                font.pointSize: Qt.application.font.pixelSize - 2
+                            }
+                            TextEdit {
+                                text: intrinsicInstruction
+                                topPadding: 0
+                                bottomPadding: 0
+                                verticalAlignment: Text.AlignVCenter
+                                textFormat: Text.PlainText
+                                font.pointSize: Qt.application.font.pixelSize - 2
+                                readOnly: true
+                                selectByMouse: true
+                                color: intrinNameLabel.color
+                            }
+                        }
                         Label {
                             text: "CPUIDs: " + intrinsicCPUIDText
                             leftPadding: 30
