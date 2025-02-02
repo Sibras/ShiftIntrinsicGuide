@@ -21,7 +21,7 @@
 
 #include <QDateTime>
 
-constexpr uint32_t fileVersion = 0x011000;
+constexpr uint32_t fileVersion = 0x011100;
 constexpr uint32_t fileID = 0xA654BE39;
 
 DataProvider::DataProvider(Application* parent) noexcept
@@ -97,12 +97,12 @@ bool DataProvider::load() noexcept
             qInfo() << "Cached data version is to old, recreating from upstream sources";
             return false;
         }
-        in.setVersion(QDataStream::Qt_6_8);
         in >> data.date;
         if (QDateTime(data.date, QTime::currentTime()).daysTo(QDateTime::currentDateTime()) > 180) {
             qInfo() << "Cached data is to old, recreating from upstream sources";
             return false;
         }
+        in.setVersion(QDataStream::Qt_6_8);
         in >> data;
         addProgress(1.0F);
         return true;
@@ -119,8 +119,8 @@ bool DataProvider::store() noexcept
         QDataStream out(&fileCache);
         out << fileID;
         out << fileVersion;
-        out.setVersion(QDataStream::Qt_6_8);
         out << data.date;
+        out.setVersion(QDataStream::Qt_6_8);
         out << data;
         addProgress(1.0F);
         return true;
